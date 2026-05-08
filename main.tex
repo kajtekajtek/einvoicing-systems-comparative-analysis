@@ -1,0 +1,51 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- encoding and language ---
+\usepackage[T1]{fontenc}        % font encoding
+\usepackage[utf8]{inputenc}     % source file encoding set to UTF-8
+\usepackage[polish]{babel}      % Polish language support
+% --- line spacing ---
+\usepackage{setspace}
+\onehalfspacing                 % 1.5 line spacing
+% --- code listings ---
+\usepackage{listings}           % source code blocks with basic formatting
+\usepackage{minted}             % advanced syntax highlighting
+% --- graphics ---
+\usepackage{graphicx}           % \includegraphics
+\graphicspath{{figures/}}       % default path for figure files
+% --- tables ---
+\usepackage{booktabs}           % \toprule, \midrule, \bottomrule
+\usepackage{tabularx}           % tables with auto-adjusted column width
+% --- bibliography ---
+\usepackage[
+  style=numeric,
+  sorting=none,
+  backend=biber
+]{biblatex}                     % bibliography management
+\addbibresource{references.bib} % bibliography database file
+% --- cross-references and hyperlinks ---
+\usepackage{hyperref}           % clickable table of contents, URLs, and citations in PDF
+\usepackage{cleveref}           % smart references (\cref auto-adds "Figure", "Table", etc.)
+
+% --- document ---
+\title{%
+  Architektura, standardy wymiany danych i bezpieczeństwo systemów e-fakturowania:\\
+  Analiza porównawcza Krajowego Systemu e-Faktur i rozwiązań europejskich%
+}
+\author{Autor}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\include{chapters/01-wstep/wstep}
+\include{chapters/02-analiza-ksef/analiza-ksef}
+\include{chapters/03-analiza-porownawcza/analiza-porownawcza}
+\include{chapters/04-podsumowanie/podsumowanie}
+
+\printbibliography[heading=bibintoc, title={Bibliografia}]
+
+\end{document}
