@@ -1,11 +1,48 @@
 \section{Analiza Krajowego Systemu e-Faktur}
 \label{sec:ksef}
 
+\subsection{Kontekst i podstawy prawne}
+\label{sec:ksef-kontekst}
+
+\textbf{KSeF (Krajowy System e-Faktur)} to centralny system teleinformatyczny 
+administracji skarbowej służący do wystawiania, otrzymywania, przechowywania
+i udostępniania faktur ustrukturyzowanych. W odróżnieniu od zwykłej faktury
+elektronicznej, takiej jak plik PDF przesłany pocztą elektroniczną, faktura
+ustrukturyzowana musi zostać wystawiona przy użyciu KSeF, mieć postać pliku 
+XML zgodnego z opublikowaną strukturą logiczną oraz otrzymać numer identyfikujący 
+ją w systemie \cite{ksef-podrecznik-2025,ksef-fa3-2025}. Oznacza to, że KSeF 
+nie jest wyłącznie kanałem komunikacji pomiędzy sprzedawcą i nabywcą, lecz 
+pełni rolę centralnego punktu walidacji oraz rejestracji dokumentu. Podstawę 
+prawną funkcjonowania systemu stanowią przepisy ustawy o podatku od towarów i 
+usług, w szczególności definicja faktury ustrukturyzowanej zawarta 
+w art. 2 pkt 32a oraz przepisy rozdziału dotyczącego wystawiania faktur za 
+pośrednictwem KSeF \cite{ksef-fa3-2025}. Od 1 lutego 2026 r. obowiązującym 
+wzorem faktury ustrukturyzowanej jest struktura logiczna FA(3), która zastępuje 
+wcześniejszą wersję FA(2) \cite{ksef-fa3-2025}
+
 \subsection{Architektura systemu}
 \label{sec:ksef-architektura}
 
-\subsection{Standardy wymiany danych}
-\label{sec:ksef-standardy}
+\subsection{Wzór faktury - struktura FA(3)}
+\label{sec:ksef-wzor-faktury}
 
-\subsection{Bezpieczeństwo}
-\label{sec:ksef-bezpieczenstwo}
+\subsection{Model komunikacji}
+\label{sec:ksef-model-komunikacji}
+
+\subsubsection{Interfejs programistyczny}
+\label{sec:ksef-interfejs-programistyczny}
+
+\subsubsection{Uwierzytelnianie i autoryzacja}
+\label{sec:ksef-uwierzytelnianie-i-autoryzacja}
+
+\subsubsection{Szyfrowanie i podpis}
+\label{sec:ksef-szyfrowanie-i-podpis}
+
+\subsubsection{Cykl życia sesji}
+\label{sec:ksef-cykl-zycia-sesji}
+
+\subsection{Cykl życia faktury}
+\label{sec:ksef-cykl-zycia-faktury}
+
+\subsection{Integracja z innymi systemami podatkowymi}
+\label{sec:ksef-integracja}
