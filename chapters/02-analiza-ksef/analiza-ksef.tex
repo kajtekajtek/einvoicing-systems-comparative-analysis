@@ -4,24 +4,59 @@
 \subsection{Kontekst i podstawy prawne}
 \label{sec:ksef-kontekst}
 
-\textbf{KSeF (Krajowy System e-Faktur)} to centralny system teleinformatyczny 
-administracji skarbowej służący do wystawiania, otrzymywania, przechowywania
-i udostępniania faktur ustrukturyzowanych. W odróżnieniu od zwykłej faktury
-elektronicznej, takiej jak plik PDF przesłany pocztą elektroniczną, faktura
-ustrukturyzowana musi zostać wystawiona przy użyciu KSeF, mieć postać pliku 
-XML zgodnego z opublikowaną strukturą logiczną oraz otrzymać numer identyfikujący 
-ją w systemie \cite{ksef-podrecznik-2025,ksef-fa3-2025}. Oznacza to, że KSeF 
-nie jest wyłącznie kanałem komunikacji pomiędzy sprzedawcą i nabywcą, lecz 
-pełni rolę centralnego punktu walidacji oraz rejestracji dokumentu. Podstawę 
-prawną funkcjonowania systemu stanowią przepisy ustawy o podatku od towarów i 
-usług, w szczególności definicja faktury ustrukturyzowanej zawarta 
-w art. 2 pkt 32a oraz przepisy rozdziału dotyczącego wystawiania faktur za 
-pośrednictwem KSeF \cite{ksef-fa3-2025}. Od 1 lutego 2026 r. obowiązującym 
-wzorem faktury ustrukturyzowanej jest struktura logiczna FA(3), która zastępuje 
-wcześniejszą wersję FA(2) \cite{ksef-fa3-2025}
+\textbf{KSeF (Krajowy System e-Faktur)} to system teleinformatyczny prowadzony przez Szefa Krajowej Administracji Skarbowej, służący w szczególności do wystawiania, otrzymywania, dostępu, przechowywania faktur ustrukturyzowanych (e-faktur).
+
+\textbf{Faktura ustrukturyzowana} to faktura wystawiona przy użyciu Krajowego Systemu e-Faktur wraz z przydzielonym numerem identyfikującym tę fakturę w tym systemie. Jest ona dokumentem elektronicznym w formacie XML zgodnym ze strukturą logiczną FA(3). \cite{ksef-w-pigulce}
+
+Wystawianie e-faktur jest obowiązkowe od 1 lutego 2026 r. dla dużych podatników, od 1 kwietnia 2026 r. dla pozostałych przedsiębiorców, z wyjątkiem najmniejszych podatników „wykluczonych cyfrowo”, których transakcje obejmują niewielkie kwoty i którzy będą objęci tym obowiązkiem od 1 stycznia 2027 r. \cite{ksef-plan-wdrozenia}
 
 \subsection{Architektura systemu}
 \label{sec:ksef-architektura}
+
+KSeF został zaprojektowany jako \textbf{scentralizowane repozytorium} faktur ustrukturyzowanych. Wszystkie e-faktury wystawiane w obrocie krajowym B2B trafiają do jednego systemu prowadzonego przez państwo, który pełni jednocześnie rolę kanału przekazu dokumentu pomiędzy wystawcą a odbiorcą oraz jego archiwum przez 10 lat. \cite{ksef-w-pigulce}
+
+\subsubsection{Komponenty logiczne}
+\label{sec:ksef-komponenty}
+
+Z perspektywy integratora architektura KSeF składa się z trzech współpracujących komponentów: \cite{ksef-docs-repo}
+
+\begin{itemize}
+    \item \textbf{System wywołujący (System IT klienta)} -- oprogramowanie podatnika (system finansowo-księgowy, ERP, aplikacja mobilna) inicjujące komunikację z KSeF.
+    \item \textbf{REST API KSeF} -- publiczny interfejs programistyczny udostępniający operacje wystawiania, odbierania, wyszukiwania faktur oraz zarządzania uprawnieniami i certyfikatami. Specyfikacja interfejsu jest publikowana w standardzie \texttt{OpenAPI 3.0.4} i stanowi jedyny kontrakt integracyjny pomiędzy systemami zewnętrznymi a KSeF. \cite{ksef-publikacja-api}
+    \item \textbf{System KSeF} -- centralne repozytorium faktur, moduł uprawnień, moduł certyfikatów wewnętrznych oraz mechanizm wystawiania Urzędowych Poświadczeń Odbioru (UPO). \cite{ksef-docs-przeglad}
+\end{itemize}
+
+\subsubsection{Kanały dostępu}
+\label{sec:ksef-kanaly-dostepu}
+
+System umożliwia kilka równoległych kanałów dostępu: \cite{ksef-plan-wdrozenia}
+
+\begin{itemize}
+    \item \textbf{REST API} -- podstawowy kanał dla integratorów i systemów ERP, opisany w sekcji \ref{sec:ksef-model-komunikacji}.
+    \item \textbf{Aplikacja Podatnika KSeF} -- bezpłatna aplikacja webowa, przeznaczona dla podatników niekorzystających z własnego oprogramowania.
+    \item \textbf{Aplikacja Mobilna KSeF} -- aplikacja na systemy Android oraz iOS, umożliwiająca wystawianie, przeglądanie i weryfikację faktur z poziomu urządzeń mobilnych.
+\end{itemize}
+
+\subsubsection{Środowiska systemu}
+\label{sec:ksef-srodowiska}
+
+KSeF 2.0 udostępniany jest w trzech niezależnych środowiskach, różniących się danymi, limitami wywołań API (\textit{rate limits}) oraz skutkami prawnymi wystawianych dokumentów:
+
+\begin{itemize}
+    \item \textbf{Środowisko testowe (integracyjne)} -- udostępnione 30 września 2025 r., przeznaczone jest do testów integracyjnych z danymi syntetycznymi. Dostępne pod adresem \texttt{api-test.ksef.mf.gov.pl}, zawiera dodatkowe \textit{pomocnicze API} pozwalające zasymulować rejestrację podmiotu, nadanie uprawnień ZAW-FA czy utworzenie grupy VAT. \cite{ksef-docs-przeglad,ksef-start-testow}
+    \item \textbf{Środowisko przedprodukcyjne (Demo)} -- uruchomione 15 października 2025 r., pracuje na rzeczywistych danych uwierzytelniających podatników, lecz wystawione faktury nie wywierają skutków prawnych. Służy weryfikacji końcowej przed produkcją. \cite{ksef-udostepnienie-przedprod}
+    \item \textbf{Środowisko produkcyjne} -- uruchomione 28 stycznia 2026 r. dla weryfikacji systemów komercyjnych, a od 1 lutego 2026 r. jedyna obowiązująca instancja KSeF. Wystawione w nim faktury wywierają pełne skutki prawne. \cite{ksef-udostepnienie-prod}
+\end{itemize}
+
+\subsubsection{Tryby pracy}
+\label{sec:ksef-tryby-pracy}
+
+Architektura KSeF przewiduje dwa równoważne tryby wystawiania faktur, które wpływają na ścieżkę dokumentu w systemie: \cite{ksef-plan-wdrozenia}
+
+\begin{itemize}
+    \item \textbf{Tryb online} -- faktura jest wystawiana bezpośrednio w KSeF, a numer KSeF (oraz datę wystawienia) nadaje system w momencie odbioru.
+    \item \textbf{Tryb offline24} -- faktura jest wystawiana lokalnie u podatnika, a następnie przesyłana do KSeF nie później niż następnego dnia roboczego. Tryb ten wymaga posłużenia się \textbf{certyfikatem KSeF typu~2} (certyfikatem offline) -- wewnętrznym certyfikatem wydawanym przez Ministerstwo Finansów, wymaganym do oznaczenia faktury kodem potwierdzającym tożsamość wystawcy przy wystawianiu poza systemem. \cite{ksef-certyfikaty}
+\end{itemize}
 
 \subsection{Wzór faktury - struktura FA(3)}
 \label{sec:ksef-wzor-faktury}
