@@ -58,8 +58,79 @@ Architektura KSeF przewiduje dwa równoważne tryby wystawiania faktur, które w
     \item \textbf{Tryb offline24} -- faktura jest wystawiana lokalnie u podatnika, a następnie przesyłana do KSeF nie później niż następnego dnia roboczego. Tryb ten wymaga posłużenia się \textbf{certyfikatem KSeF typu~2} (certyfikatem offline) -- wewnętrznym certyfikatem wydawanym przez Ministerstwo Finansów, wymaganym do oznaczenia faktury kodem potwierdzającym tożsamość wystawcy przy wystawianiu poza systemem. \cite{ksef-certyfikaty}
 \end{itemize}
 
-\subsection{Wzór faktury - struktura FA(3)}
+\subsection{Wzór faktury -- struktura logiczna FA(3)}
 \label{sec:ksef-wzor-faktury}
+
+Każda faktura ustrukturyzowana przyjmowana przez KSeF musi być sporządzona w formacie XML zgodnym ze schematem XSD o nazwie \textbf{FA(3)} -- trzeciej generacji wzoru faktury, obowiązującej od 1~lutego 2026~r. i zastępującej dotychczasowe wersje FA(1) i FA(2). Wzorzec jest opublikowany w Centralnym Repozytorium Wzorów Dokumentów Elektronicznych (CRD). \cite{ksef-w-pigulce,ksef-fa3-crd}
+
+\subsubsection{Wymagania techniczne pliku XML}
+\label{sec:ksef-fa3-xml}
+
+Plik faktury musi spełniać następujące warunki: \cite{ksef-weryfikacja-faktury}
+
+\begin{itemize}
+    \item format XML~1.0, kodowanie UTF-8 bez znacznika BOM (\textit{byte-order mark}),
+    \item zgodność z zadeklarowanym schematem wskazanym przy otwarciu sesji,
+    \item brak instrukcji przetwarzania XML (\textit{processing instructions}),
+    \item nie może zawierać niezalecanych znaków Unicode określonych w specyfikacji \textit{XML W3C},
+    \item maksymalny rozmiar pliku: 1~MB bez załączników, 3~MB z załącznikami.
+\end{itemize}
+
+\subsubsection{Struktura główna schematu}
+\label{sec:ksef-fa3-struktura}
+
+Schemat FA(3) definiuje osiem elementów najwyższego poziomu dokumentu XML: \cite{ksef-fa3-infosheet}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\linewidth}{l l X}
+    \toprule
+    \textbf{Element} & \textbf{Klasyfikacja} & \textbf{Zawartość} \\
+    \midrule
+    \texttt{Naglowek} & obowiązkowy   & \textbf{Metadane pliku}: kod i wersja schematu, data i godzina wygenerowania pliku XML, opcjonalnie nazwa oprogramowania. \\
+    \texttt{Podmiot1}           & obowiązkowy   & \textbf{Dane sprzedawcy}: NIP, nazwa, adres, opcjonalny prefiks UE i numer EORI. \\
+    \texttt{Podmiot2}           & obowiązkowy   & \textbf{Dane nabywcy} w analogicznej strukturze jak \texttt{Podmiot1}. \\
+    \texttt{Fa}                 & obowiązkowy   & \textbf{Treść faktury}: numer, daty, waluta, rodzaj, wiersze pozycji (\texttt{FaWiersz}), rozliczenie VAT (\texttt{Rozliczenie}), płatność (\texttt{Platnosc}), warunki transakcji i zamówienie. \\
+    \texttt{PodmiotUpowazniony} & warunkowy     & \textbf{Dane podmiotu upoważnionego} (np. biura rachunkowego wystawiającego fakturę w trybie samofakturowania). \\
+    \texttt{Podmiot3}           & opcjonalny    & \textbf{Dane podmiotów trzecich powiązanych z transakcją} (np.faktor, oddział JST); dopuszczalne do 100 wystąpień. \\
+    \texttt{Stopka}             & opcjonalny    & \textbf{Dodatkowe informacje}: numer KRS, REGON, treść stopki dokumentu. \\
+    \texttt{Zalacznik}          & opcjonalny    & Ustrukturyzowany załącznik z danymi o jednostkach miary lub cenach jednostkowych. \\
+    \bottomrule
+\end{tabularx}
+\caption{Elementy głównego schematu FA(3).}
+\label{tab:fa3-elementy}
+\end{table}
+
+\subsubsection{Klasyfikacja pól}
+
+Każde pole w schemacie FA(3) należy do jednej z trzech kategorii: \cite{ksef-fa3-infosheet}
+
+\begin{itemize}
+    \item \textbf{Obowiązkowe} -- muszą być wypełnione bezwarunkowo (np.\ \texttt{Podmiot1/\allowbreak{}DaneIdentyfikacyjne/\allowbreak{}NIP}).
+    \item \textbf{Warunkowe} -- wymagane tylko przy spełnieniu określonego warunku prawnego lub logicznego (np.\ \texttt{Fa/FaWiersz/P\_11A} dla faktur zaliczkowych).
+    \item \textbf{Opcjonalne} -- wypełnienie nie jest wymagane ani przez schemat, ani przez przepisy (np.\ \texttt{Fa/FaWiersz/PKWiU}), choć może być wymagane przez inne regulacje.
+\end{itemize}
+
+Wymagalność pola należy oceniać w kontekście elementu nadrzędnego: jeśli element nadrzędny jest opcjonalny i nie zostanie użyty, jego pola obowiązkowe również pozostają puste.
+
+\subsubsection{Przykład uproszczonej faktury w formacie FA(3)}
+\label{sec:ksef-fa3-przyklad}
+
+Poniższy przykład ilustruje minimalną strukturę faktury VAT zgodnej ze schematem FA(3), dokumentującej jedną pozycję usługową opodatkowaną stawką 23\%. Pominięte zostały elementy opcjonalne (\texttt{Podmiot3}, \texttt{Stopka}, \texttt{Zalacznik}) oraz warunkowy \texttt{PodmiotUpowazniony}.
+
+% TODO: poprawny przyklad
+\begin{minted}[fontsize=\small, breaklines, frame=lines, linenos]{xml}
+<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+
+
+</Faktura>
+\end{minted}
+
+\subsubsection{Weryfikacja duplikatów i unikalność}
+\label{sec:ksef-fa3-duplikaty}
+
+KSeF weryfikuje unikalność faktur na podstawie kombinacji trzech pól: NIP sprzedawcy (\texttt{Podmiot1/NIP}), rodzaju faktury (\texttt{RodzajFaktury}) oraz numeru faktury (\texttt{P\_2}). Próba przesłania faktury o identycznej kombinacji tych pól skutkuje odrzuceniem z kodem błędu~440 (,,Duplikat faktury''). Unikalność jest weryfikowana przez 10 pełnych lat od końca roku kalendarzowego wystawienia faktury. \cite{ksef-weryfikacja-faktury}
 
 \subsection{Model komunikacji}
 \label{sec:ksef-model-komunikacji}
