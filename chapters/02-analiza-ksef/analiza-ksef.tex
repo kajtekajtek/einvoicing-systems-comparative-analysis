@@ -116,14 +116,102 @@ Wymagalność pola należy oceniać w kontekście elementu nadrzędnego: jeśli 
 \subsubsection{Przykład uproszczonej faktury w formacie FA(3)}
 \label{sec:ksef-fa3-przyklad}
 
-Poniższy przykład ilustruje minimalną strukturę faktury VAT zgodnej ze schematem FA(3), dokumentującej jedną pozycję usługową opodatkowaną stawką 23\%. Pominięte zostały elementy opcjonalne (\texttt{Podmiot3}, \texttt{Stopka}, \texttt{Zalacznik}) oraz warunkowy \texttt{PodmiotUpowazniony}.
+Poniższy przykład ilustruje minimalną strukturę sprzedaży towaru.
 
-% TODO: poprawny przyklad
 \begin{minted}[fontsize=\small, breaklines, frame=lines, linenos]{xml}
 <?xml version="1.0" encoding="UTF-8"?>
-<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
-
-
+<Faktura xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+	<Naglowek>
+		<KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
+		<WariantFormularza>3</WariantFormularza>
+		<DataWytworzeniaFa>2026-02-01T00:00:00Z</DataWytworzeniaFa>
+		<SystemInfo>SamploFaktur</SystemInfo>
+	</Naglowek>
+	<Podmiot1>
+		<DaneIdentyfikacyjne>
+			<NIP>9999999999</NIP>
+			<Nazwa>ABC AGD sp. z o. o.</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Kwiatowa 1 m. 2</AdresL1>
+			<AdresL2>00-001 Warszawa</AdresL2>
+		</Adres>
+		<DaneKontaktowe>
+			<Email>abc@abc.pl</Email>
+			<Telefon>667444555</Telefon>
+		</DaneKontaktowe>
+	</Podmiot1>
+	<Podmiot2>
+		<DaneIdentyfikacyjne>
+			<NIP>1111111111</NIP>
+			<Nazwa>Jan Skrzetuski</Nazwa>
+		</DaneIdentyfikacyjne>
+		<Adres>
+			<KodKraju>PL</KodKraju>
+			<AdresL1>ul. Polna 1</AdresL1>
+			<AdresL2>00-001 Zbaraż</AdresL2>
+		</Adres>
+		<DaneKontaktowe>
+			<Email>jan@skrzetuski.pl</Email>
+			<Telefon>555777999</Telefon>
+		</DaneKontaktowe>
+		<NrKlienta>fdfd778343</NrKlienta>
+		<JST>2</JST>
+		<GV>2</GV>
+	</Podmiot2>
+	<Fa>
+		<KodWaluty>PLN</KodWaluty>
+		<P_1>2026-02-15</P_1>
+		<P_1M>Warszawa</P_1M>
+		<P_2>FV2026/02/151</P_2>
+		<P_6>2026-01-27</P_6>
+		<P_13_1>1666.66</P_13_1>
+		<P_14_1>383.33</P_14_1>
+		<P_13_3>0.95</P_13_3>
+		<P_14_3>0.05</P_14_3>
+		<P_15>2051</P_15>
+		<Adnotacje>
+			<P_16>2</P_16>
+			<P_17>2</P_17>
+			<P_18>2</P_18>
+			<P_18A>2</P_18A>
+			<Zwolnienie>
+				<P_19N>1</P_19N>
+			</Zwolnienie>
+			<NoweSrodkiTransportu>
+				<P_22N>1</P_22N>
+			</NoweSrodkiTransportu>
+			<P_23>2</P_23>
+			<PMarzy>
+				<P_PMarzyN>1</P_PMarzyN>
+			</PMarzy>
+		</Adnotacje>
+		<RodzajFaktury>VAT</RodzajFaktury>
+		<FP>1</FP>
+		<FaWiersz>
+			<NrWierszaFa>1</NrWierszaFa>
+			<UU_ID>aaaa111133339990</UU_ID>
+			<P_7>lodówka Zimnotech mk1</P_7>
+			<P_8A>szt.</P_8A>
+			<P_8B>1</P_8B>
+			<P_9A>1626.01</P_9A>
+			<P_11>1626.01</P_11>
+			<P_12>23</P_12>
+		</FaWiersz>
+		<Platnosc>
+			<Zaplacono>1</Zaplacono>
+			<DataZaplaty>2026-01-27</DataZaplaty>
+			<FormaPlatnosci>6</FormaPlatnosci>
+		</Platnosc>
+		<WarunkiTransakcji>
+			<Zamowienia>
+				<DataZamowienia>2026-01-26</DataZamowienia>
+				<NrZamowienia>4354343</NrZamowienia>
+			</Zamowienia>
+		</WarunkiTransakcji>
+	</Fa>
 </Faktura>
 \end{minted}
 
@@ -135,17 +223,68 @@ KSeF weryfikuje unikalność faktur na podstawie kombinacji trzech pól: NIP spr
 \subsection{Model komunikacji}
 \label{sec:ksef-model-komunikacji}
 
+Komunikacja z Systemem KSeF realizowana jest poprzez jednolity interfejs sieciowy. Architektura rozwiązania wymaga stosowania standardów kryptograficznych zarówno na poziomie uwierzytelniania, jak i szyfrowania przesyłanych dokumentów. \cite{ksef-docs-przeglad}
+
 \subsubsection{Interfejs programistyczny}
 \label{sec:ksef-interfejs-programistyczny}
+
+System udostępnia interfejs w architekturze \textbf{REST API}. Pełna specyfikacja kontraktu publikowana jest przez Ministerstwo Finansów w standardzie \texttt{OpenAPI 3.0.4}. 
+
+Do komunikacji wykorzystywane są dwa formaty danych: \cite{ksef-weryfikacja-faktury}
+\begin{itemize}
+    \item \textbf{JSON} -- wykorzystywany do przesyłania metadanych, zapytań o status, zarządzania uprawnieniami oraz wymiany tokenów,
+    \item \textbf{XML} -- używany wyłącznie do przesyłania samej treści faktur (w strukturze FA) oraz pobierania Urzędowego Poświadczenia Odbioru (UPO).
+\end{itemize}
+
+Interfejs wykorzystuje mechanizm \textit{rate limitingu}, w którym limity żądań określane są na sekundę, minutę i godzinę. Zakresy i wartości limitów są publicznie udostępniane, zróżnicowane w zależności od środowiska oraz dostosowane do charakteru operacji. \cite{ksef-docs-przeglad}
 
 \subsubsection{Uwierzytelnianie i autoryzacja}
 \label{sec:ksef-uwierzytelnianie-i-autoryzacja}
 
+Wersja KSeF API 2.0 wprowadziła w pełni asynchroniczny mechanizm uwierzytelniania oparty o \textbf{tokeny JWT (JSON Web Token)}, rozdzielając ten proces od cyklu życia \textit{sesji wysyłkowej} (\ref{sec:ksef-cykl-zycia-sesji}). Podstawą uzyskania dostępu jest powiązanie \textit{kontekstu logowania} (np.\ NIP firmy) z \textit{podmiotem uwierzytelniającym} (np.\ odciskiem palca użytego certyfikatu). \cite{ksef-docs-przeglad}
+
+Proces oparty jest na mechanizmie wyzwania (\textit{Challenge-Response}) i składa się z następujących kroków: \cite{ksef-docs-repo}
+
+\begin{enumerate}
+    \item \textbf{Wyzwanie (\textit{Auth Challenge}):} Klient za pomocą wywołania \texttt{POST /auth/challenge} pobiera jednorazowy znacznik ważny przez 10 minut.
+    
+    \item \textbf{Podpisanie żądania:} Klient wybiera jedną z dwóch ścieżek autoryzacji:
+    \begin{itemize}
+        \item \textbf{XAdES:} Klient buduje dokument XML (\texttt{AuthTokenRequest}) i podpisuje go podpisem w formacie XAdES (certyfikat kwalifikowany, pieczęć, profil zaufany lub wewnętrzny certyfikat KSeF). Dokument wysyłany jest asynchronicznie na \texttt{POST /auth/xades-signature}.
+        \item \textbf{Token KSeF:} Wygenerowany wcześniej wewnętrzny token systemowy połączony ze znacznikiem czasu z wyzwania zostaje zaszyfrowany za pomocą algorytmu RSA-OAEP kluczem publicznym systemu i wysłany na \texttt{POST /auth/ksef-token}.
+    \end{itemize}
+    
+    \item \textbf{Asynchroniczna weryfikacja:} w odpowiedzi zwracany jest tymczasowy token operacyjny (authenticationToken) wraz z numerem referencyjnym. Klient powinien odpytywać API o status weryfikacji, aż do uzyskania odpowiedzi o zakończeniu procesu. Jest to konieczne, ponieważ dla certyfikatów kwalifikowanych system weryfikuje w tle ich ważność u zewnętrznego wydawcy za pośrednictwem OCSP/CRL.
+    
+    \item \textbf{Odbiór JWT (\textit{Redeem}):} Gdy proces uwierzytelniania zakończy się sukcesem, klient jednorazowo wymienia token operacyjny na parę głównych tokenów dostępowych:
+    \begin{itemize}
+        \item \texttt{accessToken} -- krótkoterminowy, przekazywany w nagłówku \texttt{Authorization: Bearer} dla wszystkich autoryzowanych operacji,
+        \item \texttt{refreshToken} -- długoterminowy (ważny do 7 dni), pozwalający na płynne odświeżanie sesji bez ponawiania operacji podpisywania.
+    \end{itemize}
+\end{enumerate}
+
+% TODO: redakcja
 \subsubsection{Szyfrowanie i podpis}
 \label{sec:ksef-szyfrowanie-i-podpis}
 
+Jedną ze zmian w modelu komunikacji wprowadzonym w ramach przejścia na API 2.0 w 2026 r. jest \textbf{obowiązkowe szyfrowanie wszystkich faktur} -- zarówno w wysyłce masowej, jak i pojedynczej. Sama komunikacja odbywa się przez kanał zabezpieczony protokołem TLS, jednak dane biznesowe (pliki XML) podlegają dodatkowemu szyfrowaniu asymetryczno-symetrycznemu (\textit{Envelope Encryption}). \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
+
+\begin{enumerate}
+    \item \textbf{Klucz symetryczny (AES):} Każda faktura lub paczka faktur szyfrowana jest przez klienta lokalnie przy użyciu jednorazowego klucza w standardzie \texttt{AES-256-CBC} z dopełnieniem PKCS\#7.
+    \item \textbf{Klucz asymetryczny (RSA):} Wygenerowany klucz AES szyfrowany jest algorytmem \texttt{RSA-OAEP} (z użyciem algorytmu skrótu SHA-256 i funkcji maskującej MGF1) z wykorzystaniem klucza publicznego udostępnionego przez Ministerstwo Finansów. \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
+\end{enumerate}
+
 \subsubsection{Cykl życia sesji}
 \label{sec:ksef-cykl-zycia-sesji}
+
+Po uwierzytelnieniu za pomocą JWT, system udostępnia dwa rodzaje sesji do wysyłania faktur (oraz ujednolicony proces ich otwierania): \cite{ksef-docs-przeglad}
+
+\begin{itemize}
+    \item \textbf{Sesja interaktywna} (\texttt{POST /sessions/online}) -- synchroniczna operacja przeznaczona do wysyłki pojedynczych, zaszyfrowanych plików XML. Sesja taka ważna jest przez 12 godzin i można utrzymywać wiele takich sesji równolegle. W odpowiedzi na przesłanie faktury system natychmiast zwraca numer referencyjny.
+    \item \textbf{Sesja wsadowa} (\texttt{POST /sessions/batch}) -- asynchroniczna operacja przeznaczona do masowej wysyłki plików ZIP. Paczka ZIP dzielona jest na części do 100 MB przed zaszyfrowaniem. W API 2.0 błąd w pojedynczej fakturze wsadu odrzuca tylko ten dokument, a nie całą paczkę.
+\end{itemize}
+
+Cykl wysyłkowy kończy się zamknięciem sesji, po którym generowane jest \textbf{Urzędowe Poświadczenie Odbioru (UPO)} -- dokument w formacie XML potwierdzający formalne przyjęcie faktury, stanowiący dowód dostarczenia dla celów podatkowych.
 
 \subsection{Cykl życia faktury}
 \label{sec:ksef-cykl-zycia-faktury}
