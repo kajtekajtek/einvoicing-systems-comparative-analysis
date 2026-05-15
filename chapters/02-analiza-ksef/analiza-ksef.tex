@@ -57,7 +57,7 @@ Architektura KSeF przewiduje dwa równoważne tryby wystawiania faktur, które w
 \subsection{Wzór faktury -- struktura logiczna FA(3)}
 \label{sec:ksef-wzor-faktury}
 
-Każda faktura ustrukturyzowana przyjmowana przez KSeF musi być sporządzona w formacie XML zgodnym ze schematem XSD o nazwie \textbf{FA(3)}. Wzorzec jest opublikowany w Centralnym Repozytorium Wzorów Dokumentów Elektronicznych (CRD). \cite{ksef-w-pigulce,ksef-fa3-crd}
+Każda faktura ustrukturyzowana przyjmowana przez KSeF musi być sporządzona w formacie XML zgodnym ze schematem XSD o nazwie \textbf{FA(3)}. \cite{ksef-w-pigulce}
 
 \subsubsection{Wymagania techniczne pliku XML}
 \label{sec:ksef-fa3-xml}
@@ -220,6 +220,11 @@ xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
 
 KSeF weryfikuje unikalność faktur na podstawie kombinacji trzech pól: NIP sprzedawcy (\texttt{Podmiot1/NIP}), rodzaju faktury (\texttt{RodzajFaktury}) oraz numeru faktury (\texttt{P\_2}). Próba przesłania faktury o identycznej kombinacji tych pól skutkuje odrzuceniem z kodem błędu~440 (,,Duplikat faktury''). Unikalność jest weryfikowana przez 10 pełnych lat od końca roku kalendarzowego wystawienia faktury. \cite{ksef-weryfikacja-faktury}
 
+\subsubsection{Poziomy walidacji dokumentu}
+\label{sec:ksef-walidacja}
+
+% Proces weryfikacji faktury w KSeF przebiega dwuetapowo. Pierwszym etapem jest \textbf{walidacja syntaktyczna}, polegająca na sprawdzeniu zgodności pliku ze schematem XSD (struktura tagów, typy danych). Drugim etapem jest \textbf{walidacja semantyczna} (biznesowa), w ramach której system weryfikuje spójność logiczną dokumentu. Sprawdzane są m.in. relacje matematyczne pomiędzy polami (np. czy suma wartości netto i VAT zgadza się z kwotą brutto) oraz poprawność stawek podatkowych w relacji do daty sprzedaży. Negatywny wynik walidacji semantycznej skutkuje odrzuceniem dokumentu, mimo jego poprawności technicznej w formacie XML.
+
 \subsection{Model komunikacji}
 \label{sec:ksef-model-komunikacji}
 
@@ -281,3 +286,8 @@ Cykl wysyłkowy kończy się zamknięciem sesji, po którym zwracane jest \textb
 KSeF wymaga \textbf{szyfrowania wszystkich faktur}, zarówno w wysyłce masowej, jak i pojedynczej. Sama komunikacja odbywa się przez kanał zabezpieczony protokołem TLS, jednak dane biznesowe podlegają dodatkowemu szyfrowaniu asymetryczno-symetrycznemu (\textit{Envelope Encryption}). 
 
 Każda faktura lub paczka faktur szyfrowana jest przez klienta lokalnie przy użyciu jednorazowego klucza w standardzie \texttt{AES-256-CBC} z dopełnieniem PKCS\#7. Wygenerowany klucz AES szyfrowany jest algorytmem \texttt{RSA-OAEP} (z użyciem algorytmu skrótu SHA-256 i funkcji maskującej MGF1) z wykorzystaniem klucza publicznego udostępnionego przez Ministerstwo Finansów. \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
+
+\subsubsection{Model odbierania faktur i synchronizacji danych}
+\label{sec:ksef-odbieranie}
+
+% polling, query, synchronizacja
