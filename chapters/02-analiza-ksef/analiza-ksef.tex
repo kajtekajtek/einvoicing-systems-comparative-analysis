@@ -4,16 +4,12 @@
 \subsection{Kontekst i podstawy prawne}
 \label{sec:ksef-kontekst}
 
-\textbf{KSeF (Krajowy System e-Faktur)} to system teleinformatyczny prowadzony przez Szefa Krajowej Administracji Skarbowej, służący w szczególności do wystawiania, otrzymywania, dostępu, przechowywania faktur ustrukturyzowanych (e-faktur).
-
-\textbf{Faktura ustrukturyzowana} to faktura wystawiona przy użyciu Krajowego Systemu e-Faktur wraz z przydzielonym numerem identyfikującym tę fakturę w tym systemie. Jest ona dokumentem elektronicznym w formacie XML zgodnym ze strukturą logiczną FA(3). \cite{ksef-w-pigulce}
-
-Wystawianie e-faktur jest obowiązkowe od 1 lutego 2026 r. dla dużych podatników, od 1 kwietnia 2026 r. dla pozostałych przedsiębiorców, z wyjątkiem najmniejszych podatników „wykluczonych cyfrowo”, których transakcje obejmują niewielkie kwoty i którzy będą objęci tym obowiązkiem od 1 stycznia 2027 r. \cite{ksef-plan-wdrozenia}
+\textbf{Krajowy System e-Faktur (KSeF)} to państwowy system teleinformatyczny obowiązujący w Polsce, służący do centralnej wymiany i archiwizacji \textbf{faktur ustrukturyzowanych}, czyli dokumentów elektronicznych w formacie XML zgodnych ze strukturą logiczną FA(3). Stanowi on realizację powszechnego obowiązku fakturowania elektronicznego, który jest sukcesywnie wdrażany dla poszczególnych grup przedsiębiorców począwszy od lutego 2026~r. \cite{ksef-w-pigulce,ksef-plan-wdrozenia}
 
 \subsection{Architektura systemu}
 \label{sec:ksef-architektura}
 
-KSeF został zaprojektowany jako \textbf{scentralizowane repozytorium} faktur ustrukturyzowanych. Wszystkie e-faktury wystawiane w obrocie krajowym B2B trafiają do jednego systemu prowadzonego przez państwo, który pełni jednocześnie rolę kanału przekazu dokumentu pomiędzy wystawcą a odbiorcą oraz jego archiwum przez 10 lat. \cite{ksef-w-pigulce}
+KSeF został zaprojektowany jako \textbf{scentralizowane repozytorium} faktur ustrukturyzowanych. Wszystkie e-faktury wystawiane w obrocie krajowym B2B (\textit{Business to Business}) trafiają do jednego systemu prowadzonego przez państwo, który pełni jednocześnie rolę kanału przekazu dokumentu oraz jego archiwum przez 10 lat. \cite{ksef-w-pigulce}
 
 \subsubsection{Komponenty logiczne}
 \label{sec:ksef-komponenty}
@@ -21,8 +17,8 @@ KSeF został zaprojektowany jako \textbf{scentralizowane repozytorium} faktur us
 Z perspektywy integratora architektura KSeF składa się z trzech współpracujących komponentów: \cite{ksef-docs-repo}
 
 \begin{itemize}
-    \item \textbf{System wywołujący (System IT klienta)} -- oprogramowanie podatnika (system finansowo-księgowy, ERP, aplikacja mobilna) inicjujące komunikację z KSeF.
-    \item \textbf{REST API KSeF} -- publiczny interfejs programistyczny udostępniający operacje wystawiania, odbierania, wyszukiwania faktur oraz zarządzania uprawnieniami i certyfikatami. Specyfikacja interfejsu jest publikowana w standardzie \texttt{OpenAPI 3.0.4} i stanowi jedyny kontrakt integracyjny pomiędzy systemami zewnętrznymi a KSeF. \cite{ksef-publikacja-api}
+    \item \textbf{System wywołujący (System IT klienta)} -- oprogramowanie podatnika inicjujące komunikację z KSeF, np. system finansowo-księgowy, ERP, aplikacja mobilna.
+    \item \textbf{REST API KSeF} -- publiczny interfejs programistyczny udostępniający operacje wystawiania, odbierania, wyszukiwania faktur oraz zarządzania uprawnieniami i certyfikatami. Specyfikacja interfejsu stanowi jedyny kontrakt integracyjny pomiędzy systemami zewnętrznymi a KSeF. \cite{ksef-publikacja-api}
     \item \textbf{System KSeF} -- centralne repozytorium faktur, moduł uprawnień, moduł certyfikatów wewnętrznych oraz mechanizm wystawiania Urzędowych Poświadczeń Odbioru (UPO). \cite{ksef-docs-przeglad}
 \end{itemize}
 
@@ -40,7 +36,7 @@ System umożliwia kilka równoległych kanałów dostępu: \cite{ksef-plan-wdroz
 \subsubsection{Środowiska systemu}
 \label{sec:ksef-srodowiska}
 
-KSeF 2.0 udostępniany jest w trzech niezależnych środowiskach, różniących się danymi, limitami wywołań API (\textit{rate limits}) oraz skutkami prawnymi wystawianych dokumentów:
+System dostępny jest w trzech niezależnych środowiskach, różniących się danymi, limitami wywołań API (\textit{rate limits}) oraz skutkami prawnymi wystawianych dokumentów:
 
 \begin{itemize}
     \item \textbf{Środowisko testowe (integracyjne)} -- udostępnione 30 września 2025 r., przeznaczone jest do testów integracyjnych z danymi syntetycznymi. Dostępne pod adresem \texttt{api-test.ksef.mf.gov.pl}, zawiera dodatkowe \textit{pomocnicze API} pozwalające zasymulować rejestrację podmiotu, nadanie uprawnień ZAW-FA czy utworzenie grupy VAT. \cite{ksef-docs-przeglad,ksef-start-testow}
@@ -61,7 +57,7 @@ Architektura KSeF przewiduje dwa równoważne tryby wystawiania faktur, które w
 \subsection{Wzór faktury -- struktura logiczna FA(3)}
 \label{sec:ksef-wzor-faktury}
 
-Każda faktura ustrukturyzowana przyjmowana przez KSeF musi być sporządzona w formacie XML zgodnym ze schematem XSD o nazwie \textbf{FA(3)} -- trzeciej generacji wzoru faktury, obowiązującej od 1~lutego 2026~r. i zastępującej dotychczasowe wersje FA(1) i FA(2). Wzorzec jest opublikowany w Centralnym Repozytorium Wzorów Dokumentów Elektronicznych (CRD). \cite{ksef-w-pigulce,ksef-fa3-crd}
+Każda faktura ustrukturyzowana przyjmowana przez KSeF musi być sporządzona w formacie XML zgodnym ze schematem XSD o nazwie \textbf{FA(3)}. Wzorzec jest opublikowany w Centralnym Repozytorium Wzorów Dokumentów Elektronicznych (CRD). \cite{ksef-w-pigulce,ksef-fa3-crd}
 
 \subsubsection{Wymagania techniczne pliku XML}
 \label{sec:ksef-fa3-xml}
@@ -81,12 +77,19 @@ Plik faktury musi spełniać następujące warunki: \cite{ksef-weryfikacja-faktu
 
 Schemat FA(3) definiuje osiem elementów najwyższego poziomu dokumentu XML: \cite{ksef-fa3-infosheet}
 
-\begin{table}[H]
-\centering
-\begin{tabularx}{\linewidth}{l l X}
+\begin{xltabular}{\linewidth}{l l X}
     \toprule
     \textbf{Element} & \textbf{Klasyfikacja} & \textbf{Zawartość} \\
     \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Element} & \textbf{Klasyfikacja} & \textbf{Zawartość} \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    \bottomrule
+    \endlastfoot
     \texttt{Naglowek} & obowiązkowy   & \textbf{Metadane pliku}: kod i wersja schematu, data i godzina wygenerowania pliku XML, opcjonalnie nazwa oprogramowania. \\
     \texttt{Podmiot1}           & obowiązkowy   & \textbf{Dane sprzedawcy}: NIP, nazwa, adres, opcjonalny prefiks UE i numer EORI. \\
     \texttt{Podmiot2}           & obowiązkowy   & \textbf{Dane nabywcy} w analogicznej strukturze jak \texttt{Podmiot1}. \\
@@ -95,11 +98,8 @@ Schemat FA(3) definiuje osiem elementów najwyższego poziomu dokumentu XML: \ci
     \texttt{Podmiot3}           & opcjonalny    & \textbf{Dane podmiotów trzecich powiązanych z transakcją} (np.faktor, oddział JST); dopuszczalne do 100 wystąpień. \\
     \texttt{Stopka}             & opcjonalny    & \textbf{Dodatkowe informacje}: numer KRS, REGON, treść stopki dokumentu. \\
     \texttt{Zalacznik}          & opcjonalny    & Ustrukturyzowany załącznik z danymi o jednostkach miary lub cenach jednostkowych. \\
-    \bottomrule
-\end{tabularx}
-\caption{Elementy głównego schematu FA(3).}
-\label{tab:fa3-elementy}
-\end{table}
+	\caption{Elementy głównego schematu FA(3).} \label{tab:fa3-elementy} \\
+\end{xltabular}
 
 \subsubsection{Klasyfikacja pól}
 
@@ -263,31 +263,21 @@ Proces oparty jest na mechanizmie wyzwania (\textit{Challenge-Response}) i skła
     \end{itemize}
 \end{enumerate}
 
-% TODO: redakcja
-\subsubsection{Szyfrowanie i podpis}
-\label{sec:ksef-szyfrowanie-i-podpis}
-
-Jedną ze zmian w modelu komunikacji wprowadzonym w ramach przejścia na API 2.0 w 2026 r. jest \textbf{obowiązkowe szyfrowanie wszystkich faktur} -- zarówno w wysyłce masowej, jak i pojedynczej. Sama komunikacja odbywa się przez kanał zabezpieczony protokołem TLS, jednak dane biznesowe (pliki XML) podlegają dodatkowemu szyfrowaniu asymetryczno-symetrycznemu (\textit{Envelope Encryption}). \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
-
-\begin{enumerate}
-    \item \textbf{Klucz symetryczny (AES):} Każda faktura lub paczka faktur szyfrowana jest przez klienta lokalnie przy użyciu jednorazowego klucza w standardzie \texttt{AES-256-CBC} z dopełnieniem PKCS\#7.
-    \item \textbf{Klucz asymetryczny (RSA):} Wygenerowany klucz AES szyfrowany jest algorytmem \texttt{RSA-OAEP} (z użyciem algorytmu skrótu SHA-256 i funkcji maskującej MGF1) z wykorzystaniem klucza publicznego udostępnionego przez Ministerstwo Finansów. \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
-\end{enumerate}
-
 \subsubsection{Cykl życia sesji}
 \label{sec:ksef-cykl-zycia-sesji}
 
-Po uwierzytelnieniu za pomocą JWT, system udostępnia dwa rodzaje sesji do wysyłania faktur (oraz ujednolicony proces ich otwierania): \cite{ksef-docs-przeglad}
+Po uwierzytelnieniu system udostępnia dwa rodzaje sesji do wysyłania faktur:
 
 \begin{itemize}
-    \item \textbf{Sesja interaktywna} (\texttt{POST /sessions/online}) -- synchroniczna operacja przeznaczona do wysyłki pojedynczych, zaszyfrowanych plików XML. Sesja taka ważna jest przez 12 godzin i można utrzymywać wiele takich sesji równolegle. W odpowiedzi na przesłanie faktury system natychmiast zwraca numer referencyjny.
-    \item \textbf{Sesja wsadowa} (\texttt{POST /sessions/batch}) -- asynchroniczna operacja przeznaczona do masowej wysyłki plików ZIP. Paczka ZIP dzielona jest na części do 100 MB przed zaszyfrowaniem. W API 2.0 błąd w pojedynczej fakturze wsadu odrzuca tylko ten dokument, a nie całą paczkę.
+    \item \textbf{Sesja interaktywna} (\texttt{POST /sessions/online}) -- synchroniczna operacja przeznaczona do wysyłki pojedynczych, zaszyfrowanych plików XML. Sesja taka ważna jest przez 12 godzin i można utrzymywać wiele takich sesji równolegle. W odpowiedzi na przesłanie faktury system natychmiast zwraca numer referencyjny. \cite{ksef-sesja-interaktywna}
+    \item \textbf{Sesja wsadowa} (\texttt{POST /sessions/batch}) -- asynchroniczna operacja przeznaczona do masowej wysyłki plików ZIP. Paczka ZIP dzielona jest na części do 100 MB przed zaszyfrowaniem. \cite{ksef-sesja-wsadowa}
 \end{itemize}
 
-Cykl wysyłkowy kończy się zamknięciem sesji, po którym generowane jest \textbf{Urzędowe Poświadczenie Odbioru (UPO)} -- dokument w formacie XML potwierdzający formalne przyjęcie faktury, stanowiący dowód dostarczenia dla celów podatkowych.
+Cykl wysyłkowy kończy się zamknięciem sesji, po którym zwracane jest \textbf{Urzędowe Poświadczenie Odbioru (UPO)} -- dokument w formacie XML potwierdzający formalne przyjęcie faktury, stanowiący dowód dostarczenia dla celów podatkowych. \cite{ksef-sesja-sprawdzenie-stanu-i-pobranie-upo}
 
-\subsection{Cykl życia faktury}
-\label{sec:ksef-cykl-zycia-faktury}
+\subsubsection{Szyfrowanie i podpis}
+\label{sec:ksef-szyfrowanie-i-podpis}
 
-\subsection{Integracja z innymi systemami podatkowymi}
-\label{sec:ksef-integracja}
+KSeF wymaga \textbf{szyfrowania wszystkich faktur}, zarówno w wysyłce masowej, jak i pojedynczej. Sama komunikacja odbywa się przez kanał zabezpieczony protokołem TLS, jednak dane biznesowe podlegają dodatkowemu szyfrowaniu asymetryczno-symetrycznemu (\textit{Envelope Encryption}). 
+
+Każda faktura lub paczka faktur szyfrowana jest przez klienta lokalnie przy użyciu jednorazowego klucza w standardzie \texttt{AES-256-CBC} z dopełnieniem PKCS\#7. Wygenerowany klucz AES szyfrowany jest algorytmem \texttt{RSA-OAEP} (z użyciem algorytmu skrótu SHA-256 i funkcji maskującej MGF1) z wykorzystaniem klucza publicznego udostępnionego przez Ministerstwo Finansów. \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
