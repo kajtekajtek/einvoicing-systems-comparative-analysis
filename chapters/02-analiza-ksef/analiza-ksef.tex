@@ -59,19 +59,6 @@ Architektura KSeF przewiduje dwa równoważne tryby wystawiania faktur, które w
 
 Każda faktura ustrukturyzowana przyjmowana przez KSeF musi być sporządzona w formacie XML zgodnym ze schematem XSD o nazwie \textbf{FA(3)}. \cite{ksef-w-pigulce}
 
-\subsubsection{Wymagania techniczne pliku XML}
-\label{sec:ksef-fa3-xml}
-
-Plik faktury musi spełniać następujące warunki: \cite{ksef-weryfikacja-faktury}
-
-\begin{itemize}
-    \item format XML~1.0, kodowanie UTF-8 bez znacznika BOM (\textit{byte-order mark}),
-    \item zgodność z zadeklarowanym schematem wskazanym przy otwarciu sesji,
-    \item brak instrukcji przetwarzania XML (\textit{processing instructions}),
-    \item nie może zawierać niezalecanych znaków Unicode określonych w specyfikacji \textit{XML W3C},
-    \item maksymalny rozmiar pliku: 1~MB bez załączników, 3~MB z załącznikami.
-\end{itemize}
-
 \subsubsection{Struktura główna schematu}
 \label{sec:ksef-fa3-struktura}
 
@@ -101,129 +88,39 @@ Schemat FA(3) definiuje osiem elementów najwyższego poziomu dokumentu XML: \ci
 	\caption{Elementy głównego schematu FA(3).} \label{tab:fa3-elementy} \\
 \end{xltabular}
 
-\subsubsection{Klasyfikacja pól}
-
-Każde pole w schemacie FA(3) należy do jednej z trzech kategorii: \cite{ksef-fa3-infosheet}
-
-\begin{itemize}
-    \item \textbf{Obowiązkowe} -- muszą być wypełnione bezwarunkowo (np.\ \texttt{Podmiot1/\allowbreak{}DaneIdentyfikacyjne/\allowbreak{}NIP}).
-    \item \textbf{Warunkowe} -- wymagane tylko przy spełnieniu określonego warunku prawnego lub logicznego (np.\ \texttt{Fa/FaWiersz/P\_11A} dla faktur zaliczkowych).
-    \item \textbf{Opcjonalne} -- wypełnienie nie jest wymagane ani przez schemat, ani przez przepisy (np.\ \texttt{Fa/FaWiersz/PKWiU}), choć może być wymagane przez inne regulacje.
-\end{itemize}
-
-Wymagalność pola należy oceniać w kontekście elementu nadrzędnego: jeśli element nadrzędny jest opcjonalny i nie zostanie użyty, jego pola obowiązkowe również pozostają puste.
+Każde pole w schemacie FA(3) należy do jednej z trzech kategorii: pola \textbf{obowiązkowe} muszą wypełnione zostać bezwarunkowo (np.\ \texttt{Podmiot1/\allowbreak{}DaneIdentyfikacyjne/\allowbreak{}NIP}), pola \textbf{warunkowe} wymagane są tylko przy spełnieniu określonego warunku prawnego lub logicznego (np.\ \texttt{Fa/FaWiersz/P\_11A} dla faktur zaliczkowych), natomiast wypełnienie pól \textbf{opcjonalnych} nie jest wymagane ani przez schemat, ani przez przepisy (np.\ \texttt{Fa/FaWiersz/PKWiU}).
+Wymagalność pola należy oceniać w kontekście elementu nadrzędnego: jeśli element nadrzędny jest opcjonalny i nie zostanie użyty, jego pola obowiązkowe również pozostają puste. \cite{ksef-fa3-infosheet}
 
 \subsubsection{Przykład uproszczonej faktury w formacie FA(3)}
 \label{sec:ksef-fa3-przyklad}
 
 Poniższy przykład ilustruje minimalną strukturę sprzedaży towaru.
 
-\begin{minted}[fontsize=\small, breaklines, frame=lines, linenos]{xml}
-<?xml version="1.0" encoding="UTF-8"?>
-<Faktura xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2022/01/05/eD/DefinicjeTypy/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
-	<Naglowek>
-		<KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza>
-		<WariantFormularza>3</WariantFormularza>
-		<DataWytworzeniaFa>2026-02-01T00:00:00Z</DataWytworzeniaFa>
-		<SystemInfo>SamploFaktur</SystemInfo>
-	</Naglowek>
-	<Podmiot1>
-		<DaneIdentyfikacyjne>
-			<NIP>9999999999</NIP>
-			<Nazwa>ABC AGD sp. z o. o.</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Kwiatowa 1 m. 2</AdresL1>
-			<AdresL2>00-001 Warszawa</AdresL2>
-		</Adres>
-		<DaneKontaktowe>
-			<Email>abc@abc.pl</Email>
-			<Telefon>667444555</Telefon>
-		</DaneKontaktowe>
-	</Podmiot1>
-	<Podmiot2>
-		<DaneIdentyfikacyjne>
-			<NIP>1111111111</NIP>
-			<Nazwa>Jan Skrzetuski</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Zbaraż</AdresL2>
-		</Adres>
-		<DaneKontaktowe>
-			<Email>jan@skrzetuski.pl</Email>
-			<Telefon>555777999</Telefon>
-		</DaneKontaktowe>
-		<NrKlienta>fdfd778343</NrKlienta>
-		<JST>2</JST>
-		<GV>2</GV>
-	</Podmiot2>
-	<Fa>
-		<KodWaluty>PLN</KodWaluty>
-		<P_1>2026-02-15</P_1>
-		<P_1M>Warszawa</P_1M>
-		<P_2>FV2026/02/151</P_2>
-		<P_6>2026-01-27</P_6>
-		<P_13_1>1666.66</P_13_1>
-		<P_14_1>383.33</P_14_1>
-		<P_13_3>0.95</P_13_3>
-		<P_14_3>0.05</P_14_3>
-		<P_15>2051</P_15>
-		<Adnotacje>
-			<P_16>2</P_16>
-			<P_17>2</P_17>
-			<P_18>2</P_18>
-			<P_18A>2</P_18A>
-			<Zwolnienie>
-				<P_19N>1</P_19N>
-			</Zwolnienie>
-			<NoweSrodkiTransportu>
-				<P_22N>1</P_22N>
-			</NoweSrodkiTransportu>
-			<P_23>2</P_23>
-			<PMarzy>
-				<P_PMarzyN>1</P_PMarzyN>
-			</PMarzy>
-		</Adnotacje>
-		<RodzajFaktury>VAT</RodzajFaktury>
-		<FP>1</FP>
-		<FaWiersz>
-			<NrWierszaFa>1</NrWierszaFa>
-			<UU_ID>aaaa111133339990</UU_ID>
-			<P_7>lodówka Zimnotech mk1</P_7>
-			<P_8A>szt.</P_8A>
-			<P_8B>1</P_8B>
-			<P_9A>1626.01</P_9A>
-			<P_11>1626.01</P_11>
-			<P_12>23</P_12>
-		</FaWiersz>
-		<Platnosc>
-			<Zaplacono>1</Zaplacono>
-			<DataZaplaty>2026-01-27</DataZaplaty>
-			<FormaPlatnosci>6</FormaPlatnosci>
-		</Platnosc>
-		<WarunkiTransakcji>
-			<Zamowienia>
-				<DataZamowienia>2026-01-26</DataZamowienia>
-				<NrZamowienia>4354343</NrZamowienia>
-			</Zamowienia>
-		</WarunkiTransakcji>
-	</Fa>
-</Faktura>
-\end{minted}
+\inputminted[fontsize=\small, breaklines, frame=lines, linenos]{xml}{chapters/02-analiza-ksef/fa3-example.xml}
+
+\subsubsection{Poziomy walidacji dokumentu}
+\label{sec:ksef-walidacja}
+
+Każda faktura przechodzi przez cztery uzupełniające się poziomy walidacji, których pozytywne ukończenie jest warunkiem przyjęcia dokumentu i wystawienia UPO.
+
+\begin{enumerate}
+    \item \textbf{Walidacja syntaktyczna} weryfikuje poprawność dokumentu XML w kontekście specyfikacji \textit{XML W3C}~1.0 oraz wymagań systemu, a także zgodność z zadeklarowanym przy otwarciu sesji schematem XSD. Niespełnienie któregokolwiek z tych wymagań skutkuje odrzuceniem faktury już na etapie parsowania.
+
+    \item \textbf{Walidacja techniczna} obejmuje weryfikację maksymalnego rozmiaru pliku oraz limitu ilości faktur w sesji. Na tym poziomie sprawdzana jest również poprawność kryptograficzna: użycie algorytmu \texttt{AES-256-CBC} z dopełnieniem PKCS\#7 oraz zaszyfrowanie klucza symetrycznego algorytmem \texttt{RSAES-OAEP} (SHA-256/MGF1). W sesji interaktywnej dodatkowo wyliczane i porównywane są skróty kryptograficzne faktury jawnej oraz zaszyfrowanej wraz z ich rozmiarami.
+
+    \item \textbf{Walidacja semantyczna (biznesowa)} weryfikuje poprawność logiczną i zgodność danych z regułami biznesowymi. Obejmuje m.in.: weryfikację sumy kontrolnej numerów NIP, walidację dat wystawienia faktury, a także weryfikację unikalności faktury, omówioną w sekcji~\ref{sec:ksef-fa3-duplikaty}.
+
+    \item \textbf{Walidacja uprawnień i kontekstu} -- równolegle do walidacji treści system kontroluje, czy uwierzytelniony podmiot posiada odpowiednie uprawnienia do wystawienia faktury w kontekście wskazanego sprzedawcy (\texttt{Podmiot1}). Mechanizm ten korzysta z modułu uprawnień KSeF i obejmuje weryfikację ról nadanych zarówno bezpośrednio (np.\ właścicielowi NIP), jak i pośrednio (np.\ biuru rachunkowemu działającemu jako \texttt{PodmiotUpowazniony}). Brak uprawnień powoduje odrzucenie faktury niezależnie od jej poprawności syntaktycznej.
+\end{enumerate}
+
+Każdy zidentyfikowany błąd zwracany jest klientowi w odpowiedzi API w postaci numerycznego kodu błędu wraz z opisem. Pełna lista kodów publikowana jest jako część specyfikacji OpenAPI. \cite{ksef-openapi,ksef-weryfikacja-faktury}
 
 \subsubsection{Weryfikacja duplikatów i unikalność}
 \label{sec:ksef-fa3-duplikaty}
 
 KSeF weryfikuje unikalność faktur na podstawie kombinacji trzech pól: NIP sprzedawcy (\texttt{Podmiot1/NIP}), rodzaju faktury (\texttt{RodzajFaktury}) oraz numeru faktury (\texttt{P\_2}). Próba przesłania faktury o identycznej kombinacji tych pól skutkuje odrzuceniem z kodem błędu~440 (,,Duplikat faktury''). Unikalność jest weryfikowana przez 10 pełnych lat od końca roku kalendarzowego wystawienia faktury. \cite{ksef-weryfikacja-faktury}
 
-\subsubsection{Poziomy walidacji dokumentu}
-\label{sec:ksef-walidacja}
 
-% Proces weryfikacji faktury w KSeF przebiega dwuetapowo. Pierwszym etapem jest \textbf{walidacja syntaktyczna}, polegająca na sprawdzeniu zgodności pliku ze schematem XSD (struktura tagów, typy danych). Drugim etapem jest \textbf{walidacja semantyczna} (biznesowa), w ramach której system weryfikuje spójność logiczną dokumentu. Sprawdzane są m.in. relacje matematyczne pomiędzy polami (np. czy suma wartości netto i VAT zgadza się z kwotą brutto) oraz poprawność stawek podatkowych w relacji do daty sprzedaży. Negatywny wynik walidacji semantycznej skutkuje odrzuceniem dokumentu, mimo jego poprawności technicznej w formacie XML.
 
 \subsection{Model komunikacji}
 \label{sec:ksef-model-komunikacji}
@@ -287,7 +184,37 @@ KSeF wymaga \textbf{szyfrowania wszystkich faktur}, zarówno w wysyłce masowej,
 
 Każda faktura lub paczka faktur szyfrowana jest przez klienta lokalnie przy użyciu jednorazowego klucza w standardzie \texttt{AES-256-CBC} z dopełnieniem PKCS\#7. Wygenerowany klucz AES szyfrowany jest algorytmem \texttt{RSA-OAEP} (z użyciem algorytmu skrótu SHA-256 i funkcji maskującej MGF1) z wykorzystaniem klucza publicznego udostępnionego przez Ministerstwo Finansów. \cite{ksef-docs-przeglad,ksef-weryfikacja-faktury}
 
-\subsubsection{Model odbierania faktur i synchronizacji danych}
+\subsubsection{Model odbioru faktur i synchronizacji danych}
 \label{sec:ksef-odbieranie}
 
-% polling, query, synchronizacja
+KSeF stanowi pasywne repozytorium, z którego klient samodzielnie pobiera dokumenty w modelu \textit{pull}. Cała komunikacja realizowana jest poprzez cykliczne odpytywanie API (\textit{polling}) -- system nie udostępnia natywnego mechanizmu \textit{push} (np.\ \textit{webhooków}). \cite{ksef-pobieranie-faktur}
+
+\subsubsection*{Wyszukiwanie i pobieranie pojedynczej faktury} 
+
+Do podstawowych operacji odbiorczych system udostępnia dwa endpointy: \cite{ksef-pobieranie-faktur}
+
+\begin{itemize}
+    \item \texttt{GET /invoices/ksef/\{ksefNumber\}} -- zwraca treść XML konkretnej faktury identyfikowanej numerem KSeF nadanym przy wystawieniu,
+    \item \texttt{POST /invoices/query/metadata} -- zwraca \textbf{stronicowaną listę metadanych} (m.in.\ numer KSeF, NIP-y stron, daty, kwoty) faktur spełniających kryteria filtra (\texttt{InvoiceQueryFilters}).
+\end{itemize}
+
+\subsubsection*{Eksport asynchroniczny} 
+
+Pobieranie dużych zbiorów faktur (np.\ pełnej historii podmiotu) realizowane jest poprzez parę endpointów asynchronicznych: \cite{ksef-pobieranie-faktur}
+
+\begin{enumerate}
+    \item \texttt{POST /invoices/exports} -- klient inicjuje operację, przekazując filtry oraz informacje o szyfrowaniu (klucz AES + IV), które posłużą do zabezpieczenia paczki wynikowej. W odpowiedzi otrzymuje numer referencyjny operacji.
+    \item \texttt{GET /invoices/exports/\{referenceNumber\}} -- klient cyklicznie odpytuje endpoint o status operacji. W odpowiedzi zwracane są adresy URL zaszyfrowanych części archiwum ZIP.
+\end{enumerate}
+
+\subsubsection*{Przyrostowe pobieranie faktur} 
+
+W scenariuszu utrzymywania lokalnej kopii repozytorium kluczowa jest \textit{ciągłość} pobierania danych. System adresuje ten problem poprzez mechanizm \textbf{High Water Mark (HWM)}, czyli punkt w czasie, do którego system gwarantuje kompletność danych. Wartość ta wyrażona jest datą trwałego zapisu faktury w repozytorium.
+
+W modelu przyrostowym klient pobiera faktury w przylegających, nieprzecinających się oknach czasowych. Każda paczka eksportu zawiera jeden ze znaczników pozwalających wyznaczyć początek kolejnego okna: \cite{ksef-przyrostowe-pobieranie}
+
+\begin{itemize}
+    \item \texttt{PermanentStorageHwmDate} -- górna granica gwarancji kompletności; używana, gdy paczka nie została obcięta.
+    \item \texttt{LastPermanentStorageDate} -- data ostatniej faktury w paczce, gdy paczka osiągnęła limit rozmiaru lub liczby faktur.
+\end{itemize}
+
