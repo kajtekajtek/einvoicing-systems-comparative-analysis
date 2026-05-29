@@ -24,6 +24,8 @@ Architekturę wybranych systemów e-fakturowania można podzielić na dwa podsta
 
 W modelu scentralizowanym każda faktura musi zostać zatwierdzona przez system państwowy, zanim dotrze do odbiorcy. Model ten jest realizowany zarówno przez KSeF oraz SdI.
 
+Z~inżynierskiego punktu widzenia model centralnego huba jest klasycznym \textit{single point of failure}, w którym awaria centralnego węzła paraliżuje e-fakturowanie w~skali całego kraju. Zarówno SdI, jak i~KSeF adresują ten problem przez zapewnienie redundancji infrastrukturalnej i~procedur awaryjnych. W~przypadku KSeF szczególną rolę odgrywa tryb offline (tzw.\ tryb offline24 opisany w~sekcji~\ref{sec:ksef-tryby-pracy}).
+
 \subsubsection{Sieć interoperacyjna -- model 4-corner PEPPOL}
 \label{sec:porownanie-4corner}
 
@@ -75,7 +77,7 @@ Analizowane systemy różnią się zasadniczo w warstwie transportowej -- zarów
 \begin{itemize}
     \item \textbf{SDICoop} -- kanał SOAP/Web Services dostępny przez szyfrowany protokół HTTP. Wymaga akredytacji i~certyfikatu kanałowego.
     \item \textbf{SDIFTP} -- transfer plików przy użyciu protokołu SFTP na dedykowanych terminalach. Wymaga akredytacji i stałej infrastruktury.
-    \item \textbf{PEC} (\textit{Posta Elettronica Certificata}) -- włoska certyfikowana poczta e-mail.
+    \item \textbf{PEC} (\textit{Posta Elettronica Certificata}) -- włoska certyfikowana poczta elektroniczna. Z~technicznego punktu widzenia jest to standardowy protokół SMTP/IMAP uzupełniony o~warstwę weryfikacji certyfikatów przez akredytowanych dostawców, gwarantującą kryptograficzny dowód nadania i~doręczenia (odpowiednik prawnie wiążącego listu poleconego w~kanale e-mail). Faktura trafia jako załącznik XML na dedykowany adres.
     \item \textbf{Interfejs webowy} ``Fatture e Corrispettivi'' -- upload pliku przez przeglądarkę (limit 5~MB); przeznaczony dla sporadycznych wystawców.
 \end{itemize}
 
@@ -133,6 +135,8 @@ Podsumowując różnice strategii: SdI ufa podpisowi \emph{na dokumencie}, PEPPO
 
 \subsection{Podsumowanie}
 \label{sec:porownanie-podsumowanie}
+
+Syntetyczne zestawienie kluczowych cech technicznych analizowanych systemów przedstawiono w~tabeli~\ref{tab:porownanie}.
 
 \begin{xltabular}{\linewidth}{l X X X}
     \toprule
