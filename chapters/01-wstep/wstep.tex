@@ -7,4 +7,10 @@
 \subsection{Cel i zakres pracy}
 \label{sec:wstep-cel}
 
-Niniejsza praca ma na celu~\ldots
+Postępująca cyfryzacja procesów biznesowych prowadzi do stopniowego odchodzenia od dokumentów nieustrukturyzowanych -- w formie papierowej oraz ich cyfrowych odpowiedników w~formacie PDF -- na rzecz formatów przeznaczonych do automatycznego, maszynowego przetwarzania. Faktura, jako jeden z~kluczowych dokumentów obrotu gospodarczego, znajduje się w~centrum tej transformacji. Dokument przeznaczony dotychczas głównie do odczytu przez człowieka ustępuje miejsca \textbf{fakturze ustrukturyzowanej}, zapisanej w~ściśle zdefiniowanym schemacie XML, którą systemy informatyczne mogą wystawiać, walidować i~księgować bez ingerencji operatora.
+
+Przejście to nie jest wyłącznie zmianą formatu pliku, lecz wymusza budowę dedykowanej infrastruktury wymiany dokumentów. W~skali europejskiej powstało wiele konkurencyjnych podejść do tego zagadnienia -- od rozwiązań skrajnie scentralizowanych, w~których każda faktura przechodzi przez pojedynczy system państwowy, po modele w~pełni rozproszone, oparte na federacji niezależnych dostawców usług. Różnorodność ta stanowi istotne wyzwanie dla architektów systemów klasy ERP (\textit{Enterprise Resource Planning}), którzy muszą integrować oprogramowanie biznesowe z~heterogenicznymi platformami, różniącymi się protokołami transportowymi, formatami danych oraz wymaganiami kryptograficznymi.
+
+Celem niniejszej pracy jest analiza porównawcza architektury, standardów wymiany danych oraz mechanizmów bezpieczeństwa w~wybranych europejskich systemach e-fakturowania, ze szczególnym uwzględnieniem Krajowego Systemu e-Faktur (KSeF) jako studium przypadku. Jako punkty odniesienia dla KSeF przyjęto włoski system Sistema di Interscambio (SdI), reprezentujący dojrzały model centralny, oraz sieć PEPPOL, reprezentującą model rozproszony.
+
+Zakres pracy obejmuje analizę specyfikacji technicznych KSeF, SdI oraz sieci PEPPOL pod kątem modeli architektonicznych, protokołów transportowych, formatów XML oraz kryptografii warstwy aplikacji. Poza zakresem pracy pozostają natomiast szczegółowe analizy prawno-podatkowe oraz aspekty księgowe procesów biznesowych -- przepisy prawa przywoływane są jedynie w~zakresie niezbędnym do wyjaśnienia kontekstu i~ram obowiązywania omawianych systemów.
