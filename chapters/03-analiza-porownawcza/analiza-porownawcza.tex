@@ -1,44 +1,44 @@
 \section{Analiza porównawcza rozwiązań europejskich}
 \label{sec:porownanie}
 
-\subsection{Przegląd wybranych systemów europejskich}
+\subsection{Przegląd wybranych implementacji}
 \label{sec:porownanie-europa}
 
 \subsubsection{Sistema di Interscambio (SdI)}
 \label{sec:wstep-sdi}
 
-\textbf{Sistema di Interscambio (SdI)} to krajowy system e-fakturowania obowiązujący we Włoszech, prowadzony przez włoską administrację skarbową. Podobnie do KSeF, oparty jest na modelu \textit{central hub} -- działa jako pośrednik, który weryfikuje, przetwarza i dostarcza faktury. SdI jest najdłużej działającym obowiązkowym systemem B2G w Unii Europejskiej (od 2014~r.) i pierwszym, który objął powszechnym obowiązkiem transakcje B2B i B2C (od 1~stycznia 2019~r.). \cite{edicom-einvoicing-italy,sdi-fatturapa-cose,ec-einvoicing-italy-2025}
+\textbf{Sistema di Interscambio (SdI)} to krajowy system e-fakturowania obowiązujący we Włoszech, prowadzony przez włoską administrację skarbową. Podobnie do KSeF, oparty jest na modelu centralnego węzła, który działa jako pośrednik weryfikujący, przetwarzający i dostarczający faktury. SdI jest najdłużej działającym obowiązkowym systemem B2G (\textit{Business to Government}) w Unii Europejskiej (od 2014~r.) i pierwszym, który objął powszechnym obowiązkiem transakcje B2B i B2C (\textit{Business to Consumer}) (od 1~stycznia 2019~r.). \cite{edicom-einvoicing-italy,sdi-fatturapa-cose,ec-einvoicing-italy-2025}
 
 \subsubsection{PEPPOL}
 \label{sec:wstep-peppol}
 
-\textbf{PEPPOL} (\textit{Pan-European Public Procurement On-Line}) to otwarta, wielostronna sieć interoperacyjna zarządzana przez organizację non-profit \textbf{OpenPeppol AISBL} z siedzibą w Brukseli. W odróżnieniu od SdI i KSeF, PEPPOL nie jest systemem centralnym -- nie przechowuje faktur ani nie pełni roli scentralizowanego pośrednika w obrocie; jest natomiast zbiorem standardów, protokołów i polityk umożliwiających bezpośrednią wymianę ustrukturyzowanych dokumentów między akredytowanymi punktami dostępu (\textit{Access Points}). Sieć obejmuje ponad 40~jurysdykcji na świecie, a jej pierwotny mandat prawny -- obowiązek e-fakturowania B2G -- wynika z~Dyrektywy 2014/55/UE. \cite{peppol-interop-framework,dir-2014-55-ue}
+\textbf{PEPPOL (Pan-European Public Procurement On-Line)} to otwarta, wielostronna sieć interoperacyjna zarządzana przez organizację non-profit \textbf{OpenPeppol AISBL} z siedzibą w Brukseli. W odróżnieniu od SdI i KSeF, PEPPOL nie jest systemem centralnym -- nie przechowuje faktur ani nie pełni roli scentralizowanego pośrednika w obrocie; jest natomiast zbiorem standardów, protokołów i polityk umożliwiających bezpośrednią wymianę ustrukturyzowanych dokumentów między akredytowanymi punktami dostępu (\textit{Access Points}). Sieć obejmuje ponad 40~jurysdykcji na świecie, a jej pierwotny mandat prawny -- obowiązek e-fakturowania B2G -- wynika z~Dyrektywy 2014/55/UE. \cite{peppol-interop-framework,dir-2014-55-ue}
 
 \subsection{Modele architektury: centralizacja vs sieci rozproszone}
 \label{sec:porownanie-modele-architektury}
 
 Architekturę wybranych systemów e-fakturowania można podzielić na dwa podstawowe paradygmaty: \textit{model scentralizowany} oraz \textit{model sieci interoperacyjnej}. \cite{edicom-einvoice-models}
 
-\subsubsection{Centralny hub -- model SdI i KSeF}
+\subsubsection{Centralny \textit{hub} -- model SdI i KSeF}
 \label{sec:porownanie-central-hub}
 
 W modelu scentralizowanym każda faktura musi zostać zatwierdzona przez system państwowy, zanim dotrze do odbiorcy. Model ten jest realizowany zarówno przez KSeF oraz SdI.
 
-Z~inżynierskiego punktu widzenia model centralnego huba jest klasycznym \textit{single point of failure}, w którym awaria centralnego węzła paraliżuje e-fakturowanie w~skali całego kraju. Zarówno SdI, jak i~KSeF adresują ten problem przez zapewnienie redundancji infrastrukturalnej i~procedur awaryjnych. W~przypadku KSeF szczególną rolę odgrywa tryb offline (tzw.\ tryb offline24 opisany w~sekcji~\ref{sec:ksef-tryby-pracy}).
+Model scentralizowany stanowi przykład problemu pojedynczego punktu awarii (\textit{single point of failure}), w którym awaria centralnego węzła niesie ze sobą zagrożenie zawieszenia e-fakturowania w~skali całego kraju. Zarówno SdI, jak i~KSeF adresują ten problem przez zapewnienie redundancji infrastrukturalnej i~procedur awaryjnych. W~przypadku KSeF szczególną rolę odgrywa tzw.\ tryb offline24 opisany w~sekcji~\ref{sec:ksef-tryby-pracy}.
 
 \subsubsection{Sieć interoperacyjna -- model 4-corner PEPPOL}
 \label{sec:porownanie-4corner}
 
-Sieć PEPPOL opiera się na \textbf{modelu czterech narożników (4-corner model)}, w którym wystawca i odbiorca komunikują się pośrednio przez punkty dostępu (\textit{Access Points}), czyli akredytowanych przez PEPPOL dostawców usług.
+Sieć PEPPOL opiera się na \textbf{modelu czterech narożników (4-corner model)}, w którym wystawca i odbiorca komunikują się pośrednio przez punkty dostępu (\textit{Access Points}), czyli akredytowanych przez PEPPOL dostawców usług. Rolę każdego z narożników można opisać następująco:
 
 \begin{enumerate}
     \item \textbf{C1 -- Nadawca:} wystawca faktury.
-    \item \textbf{C2 -- Punkt dostępu nadawcy:} konwertuje fakturę do formatu PEPPOL, waliduje, szyfruje i przesyła do AP odbiorcy, korzystając z dynamicznego wyszukiwania.
+    \item \textbf{C2 -- Punkt dostępu nadawcy:} konwertuje fakturę do formatu PEPPOL, waliduje, szyfruje i przesyła do \textit{AP} odbiorcy, korzystając z dynamicznego wyszukiwania.
     \item \textbf{C3 -- Punkt dostępu odbiorcy:} weryfikuje, deszyfruje, waliduje i przekazuje fakturę do C4.
     \item \textbf{C4 -- Odbiorca:} adresat faktury.
 \end{enumerate}
 
-Kluczową różnicą wobec KSeF i SdI jest brak centralnego repozytorium: żaden organ państwowy nie ma automatycznego dostępu do treści faktury w momencie jej transmisji, chyba że sam uczestniczy w wymianie. Wyjątkiem jest \textbf{wariant 5-corner}, będący rozszerzeniem sieci, w którym równolegle do procesu dołączony jest piąty uczestnik (zazwyczaj organ podatkowy) otrzymujący dane z faktury do celów sprawozdawczych. \cite{peppol-interop-framework,einvoicing-dicovering-pepol}
+Kluczową różnicą wobec KSeF i SdI stanowi brak centralnego repozytorium: żaden organ państwowy nie ma automatycznego dostępu do treści faktury w momencie jej transmisji, chyba że sam uczestniczy w wymianie. Wyjątkiem jest \textbf{wariant 5-corner}, będący rozszerzeniem modelu czterech narożników, w którym równolegle do procesu dołączony jest piąty uczestnik (zazwyczaj organ podatkowy) otrzymujący dane z faktury do celów sprawozdawczych. \cite{peppol-interop-framework,einvoicing-dicovering-pepol}
 
 \subsection{Standardy i formaty danych}
 \label{sec:porownanie-standardy-formaty}
@@ -51,14 +51,14 @@ Kluczową różnicą wobec KSeF i SdI jest brak centralnego repozytorium: żaden
 \subsubsection{FatturaPA}
 \label{sec:porownanie-fatturapa}
 
-\textbf{FatturaPA} to krajowy schemat XML stosowany w SdI. Dokument XML zbudowany jest wokół elementu głównego \texttt{FatturaElettronica}, zawierającego sekcje \texttt{FatturaElettronicaHeader} (dane nadawcy, odbiorcy, numery referencyjne) i \texttt{FatturaElettronicaBody} (treść faktury, pozycje, kwoty VAT). Atrybut \texttt{FormatoTrasmissione} wskazuje typ faktury: \texttt{FPA12} dla administracji publicznej lub \texttt{FPR12} dla podmiotów prywatnych. \cite{sdi-fatturapa-format}
+\textbf{FatturaPA} to krajowy schemat XML stosowany w SdI. Dokument XML zbudowany jest wokół elementu głównego \texttt{FatturaElettronica}, zawierającego sekcje \texttt{FatturaElettronicaHeader} (dane nadawcy, odbiorcy, numery referencyjne) i \texttt{FatturaElettronicaBody} (treść faktury, pozycje, kwoty VAT). \cite{sdi-fatturapa-format}
 
-Nie jest on bezpośrednią implementacją normy, lecz autonomicznym schematem krajowym, którego zgodność z~EN~16931 realizowana jest pośrednio -- przez translację lub równoważność merytoryczną -- a~nie przez dziedziczenie składni normy.
+Schemat FatturaPA \textbf{nie jest bezpośrednią implementacją} normy EN~16931, lecz autonomicznym schematem krajowym, którego zgodność z normą realizowana jest pośrednio -- przez translację lub równoważność merytoryczną -- a~nie przez dziedziczenie składni.
 
 \subsubsection{PEPPOL BIS Billing 3.0}
 \label{sec:porownanie-bis-billing}
 
-\textbf{PEPPOL BIS Billing 3.0} (\textit{Business Interoperability Specification}) to specyfikacja fakturowania stosowana w~sieci PEPPOL bazująca bezpośrednio na normie EN~16931. Każda faktura zgodna z~PEPPOL BIS Billing 3.0 jest z~definicji zgodna z~EN~16931, lecz nie odwrotnie. BIS 3.0 dodaje ponad 80~dodatkowych reguł walidacyjnych (artefakty ISO Schematron) zaostrza opcjonalność niektórych pól EN~16931 i wymaga konkretnych list kodów. Specyfikacja obsługuje dwie składnie XML: UBL~2.1 (podstawowa) i CII D16B. \cite{peppol-bis-billing-3}
+\textbf{PEPPOL BIS Billing 3.0} (\textit{Business Interoperability Specification}) to specyfikacja fakturowania stosowana w~sieci PEPPOL \textbf{bazująca bezpośrednio} na normie EN~16931. Każda faktura zgodna z~PEPPOL BIS Billing 3.0 jest z~definicji zgodna z~EN~16931, lecz nie odwrotnie. BIS 3.0 dodaje ponad 80~dodatkowych reguł walidacyjnych, zaostrza opcjonalność niektórych pól i wymaga konkretnych list kodów. Specyfikacja obsługuje dwie składnie XML: UBL~2.1 (podstawowa) i CII D16B. \cite{peppol-bis-billing-3}
 
 \subsubsection*{Zestawienie formatów względem FA(3).}
 Zestawiając trzy formaty, FA(3) i FatturaPA reprezentują podejście \textit{krajowe} -- oba są autonomicznymi schematami XML niepowiązanymi bezpośrednio z~EN~16931, definiowanymi przez administracje skarbowe wyłącznie na potrzeby własnego systemu. PEPPOL BIS~3.0 stanowi formalną implementację normy transgranicznej, co umożliwia wymianę faktur bez konwersji formatu między 40+~jurysdykcjami.
@@ -71,32 +71,30 @@ Zestawiając trzy formaty, FA(3) i FatturaPA reprezentują podejście \textit{kr
 
 Analizowane systemy różnią się zasadniczo w warstwie transportowej -- zarówno pod względem liczby obsługiwanych kanałów, jak i paradygmatu wymiany komunikatów.
 
-\subsubsection*{Sistema di Interscambio}
-\label{sec:porownanie-kanaly-transmisji-sdi}
+\textbf{Sistema di Interscambio} udostępnia następujące kanały transmisji:
 
 \begin{itemize}
     \item \textbf{SDICoop} -- kanał SOAP/Web Services dostępny przez szyfrowany protokół HTTP. Wymaga akredytacji i~certyfikatu kanałowego.
     \item \textbf{SDIFTP} -- transfer plików przy użyciu protokołu SFTP na dedykowanych terminalach. Wymaga akredytacji i stałej infrastruktury.
-    \item \textbf{PEC} (\textit{Posta Elettronica Certificata}) -- włoska certyfikowana poczta elektroniczna. Z~technicznego punktu widzenia jest to standardowy protokół SMTP/IMAP uzupełniony o~warstwę weryfikacji certyfikatów przez akredytowanych dostawców, gwarantującą kryptograficzny dowód nadania i~doręczenia (odpowiednik prawnie wiążącego listu poleconego w~kanale e-mail). Faktura trafia jako załącznik XML na dedykowany adres.
-    \item \textbf{Interfejs webowy} ``Fatture e Corrispettivi'' -- upload pliku przez przeglądarkę (limit 5~MB); przeznaczony dla sporadycznych wystawców.
+    \item \textbf{PEC} (\textit{Posta Elettronica Certificata}) -- włoska certyfikowana poczta elektroniczna. Z~technicznego punktu widzenia jest to standardowy protokół SMTP/IMAP uzupełniony o~warstwę weryfikacji certyfikatów przez akredytowanych dostawców, gwarantującą kryptograficzny dowód nadania i~doręczenia (odpowiednik prawnie wiążącego listu poleconego w~kanale e-mail).
+    \item \textbf{Interfejs webowy} ``Fatture e Corrispettivi'' -- upload pliku przez przeglądarkę (limit 5~MB).
 \end{itemize}
 
-\subsubsection*{PEPPOL}
-\label{sec:porownanie-kanaly-transmisji-peppol}
+\textbf{Sieć PEPPOL} stosuje pojedynczy, ustandaryzowany protokół transportowy \textbf{AS4} (w profilu Peppol AS4 v2.0.3). Standard ten bazuje na ogólnoświatowej specyfikacji wymiany danych~\textbf{ebMS 3.0} konsorcjum OASIS i realizuje unijne wytyczne infrastruktury cyfrowej \textbf{eDelivery AS4 v1.14} Komisji Europejskiej. 
 
-Sieć PEPPOL stosuje pojedynczy, ustandaryzowany protokół transportowy \textbf{AS4} (w profilu Peppol AS4 v2.0.3). Standard ten bazuje na ogólnoświatowej specyfikacji wymiany danych \textbf{ebMS 3.0} (od konsorcjum OASIS) i realizuje unijne wytyczne infrastruktury cyfrowej \textbf{eDelivery AS4 v1.14} Komisji Europejskiej. Wzorzec wymiany to asynchroniczny \textit{one-way push} -- punkt dostępu nadawcy wysyła wiadomość do punktu odbiorcy, otrzymując jedynie techniczne potwierdzenie odbioru, bez oczekiwania na zwrotną odpowiedź biznesową w tej samej sesji. \cite{peppol-as4-profile,ec-as4-edelivery}
+Wzorcem wymiany jest asynchroniczne przesyłanie jednokierunkowe, w którym punkt dostępu nadawcy wysyła wiadomość do punktu odbiorcy, otrzymując jedynie techniczne potwierdzenie odbioru, bez oczekiwania na zwrotną odpowiedź biznesową w tej samej sesji. \cite{peppol-as4-profile,ec-as4-edelivery}
 
-Kluczowym elementem modelu komunikacji sieci PEPPOL jest mechanizm \textbf{SML/SMP}: nadawca oblicza hash identyfikatora PEPPOL odbiorcy i odpytuje \textbf{SML} (\textit{Service Metadata Locator}) -- serwer DNS wskazujący właściwy \textbf{SMP} (\textit{Service Metadata Publisher}). SMP zwraca URL endpointu AS4 punktu dostępu odbiorcy oraz jego klucz publiczny, umożliwiając dynamiczne wyszukiwanie bez centralnego rejestru adresów. \cite{peppol-sml-spec}
+Kluczowym elementem modelu komunikacji sieci PEPPOL jest mechanizm \textbf{SML/SMP}, w którym nadawca oblicza hash identyfikatora PEPPOL odbiorcy i odpytuje \textbf{SML} (\textit{Service Metadata Locator}), serwer DNS, o wskazanie \textbf{SMP} (\textit{Service Metadata Publisher}). Wskazany SMP zwraca adres URL AS4 punktu dostępu odbiorcy oraz jego klucz publiczny, umożliwiając dynamiczne wyszukiwanie bez centralnego rejestru adresów. \cite{peppol-sml-spec}
 
 \subsubsection*{Zestawienie modeli komunikacji.}
 
 Analizowane systemy reprezentują trzy odmienne paradygmaty komunikacji. 
 
-SdI utrzymuje \textbf{równolegle wiele heterogenicznych kanałów} (SOAP, SFTP, PEC, interfejs webowy) o~różnych progach akredytacji, dostosowanych do skali wystawcy -- od jednorazowego użytkownika przeglądarki po stałych operatorów. 
+SdI utrzymuje równolegle wiele heterogenicznych kanałów o~różnych progach akredytacji, dostosowanych do skali wystawcy -- od jednorazowego użytkownika przeglądarki po stałych operatorów. 
 
-PEPPOL przyjmuje podejście \textbf{jednego ustandaryzowanego protokołu} AS4 z~obligatoryjnym mechanizmem dynamicznego wyszukiwania SML/SMP, co jest konsekwencją modelu 4-corner -- brak centralnego ośrodka wymusza zdolność każdego punktu dostępu do samodzielnego ustalenia adresu odbiorcy. 
+PEPPOL przyjmuje podejście jednego ustandaryzowanego protokołu AS4 z~obligatoryjnym mechanizmem dynamicznego wyszukiwania, co jest konsekwencją modelu zdecentralizowanego, w którym brak centralnego ośrodka wymusza zdolność każdego punktu dostępu do samodzielnego ustalenia adresu odbiorcy. 
 
-KSeF implementuje ścieżkę \textbf{pojedynczego interfejsu REST}, bez mechanizmu odkrywania odbiorców, wykorzystując centralne repozytorium tożsamości podatkowych. 
+KSeF implementuje ścieżkę pojedynczego interfejsu REST, bez mechanizmu odkrywania odbiorców, wykorzystując centralne repozytorium tożsamości podatkowych. 
 
 W~konsekwencji złożoność implementacyjna rozkłada się różnie: w~SdI po stronie wystawcy (wybór kanału i~akredytacja), w~PEPPOL po stronie sieci (utrzymanie SML/SMP), a~w~KSeF po stronie państwa (skalowanie centralnego repozytorium).
 
@@ -105,65 +103,24 @@ W~konsekwencji złożoność implementacyjna rozkłada się różnie: w~SdI po s
 
 Trzy systemy stosują odmienne modele tożsamości, odzwierciedlające ich architektoniczne paradygmaty.
 
-\textbf{SdI} wymaga \textbf{kwalifikowanego podpisu elektronicznego} na pliku faktury: dopuszczalne są formaty \textbf{CAdES-BES} lub \textbf{XAdES-BES}. Dla kanałów akredytowanych (SDICoop, SDIFTP) wymagane są dodatkowo certyfikaty uwierzytelniające. \cite{agenziaentrate-come-fare-fattura,sdi-fatturapa-accreditamento,sdi-fatturapa-regole-tecniche}
+SdI wymaga \textbf{kwalifikowanego podpisu elektronicznego} na pliku faktury: dopuszczalne są formaty \textbf{CAdES-BES} lub \textbf{XAdES-BES}. Dla kanałów akredytowanych (SDICoop, SDIFTP) wymagane są dodatkowo certyfikaty uwierzytelniające. \cite{agenziaentrate-come-fare-fattura,sdi-fatturapa-accreditamento,sdi-fatturapa-regole-tecniche}
 
-W sieci \textbf{PEPPOL} autentyczność dokumentu nie wymaga podpisu kwalifikowanego na samej fakturze -- bezpieczeństwo danych gwarantuje warstwa transportowa AS4 przy użyciu cyfrowego podpisu XML-DSig. Cała sieć opiera się na wewnętrznym systemie zaufania \textit{PKI OpenPeppol} (generacji G3), w którym dedykowane urzędy certyfikacji (\textit{CA}) wydają osobne klucze bezpieczeństwa dla punktów dostępu oraz serwerów adresowych SMP. Formalne uruchomienie nowego punktu dostępu wymaga: (1) członkostwa w OpenPeppol lub umowy Service Provider Agreement z krajowym organem zarządzającym (\textit{Peppol Authority}), (2) zaliczenia testów zgodności na platformie Testbed oraz (3) odebrania produkcyjnego certyfikatu kryptograficznego. \cite{peppol-pki-2025}
+W sieci PEPPOL autentyczność dokumentu nie wymaga podpisu kwalifikowanego na samej fakturze -- bezpieczeństwo danych gwarantuje warstwa transportowa AS4 przy użyciu cyfrowego podpisu \textbf{XML-DSig}. Cała sieć opiera się na wewnętrznym systemie zaufania \textit{PKI OpenPeppol}, w którym dedykowane urzędy certyfikacji (\textit{CA}) wydają osobne klucze bezpieczeństwa dla punktów dostępu oraz serwerów adresowych SMP. Formalne uruchomienie nowego punktu dostępu wymaga członkostwa w OpenPeppol lub umowy Service Provider Agreement z krajowym organem zarządzającym (\textit{Peppol Authority}), zaliczenia testów zgodności na platformie Testbed oraz odebrania produkcyjnego certyfikatu kryptograficznego. \cite{peppol-pki-2025}
 
 \subsubsection*{Zestawienie modeli uwierzytelniania i autoryzacji.}
 
 Zestawienie trzech systemów ukazuje trzy odmienne podejścia do kwestii zaufania, tożsamości i~odpowiedzialności za integralność dokumentu:
 \begin{itemize}
     \item \textbf{Model zorientowany na dokument (SdI):} zaufanie jest rozproszone i~zakotwiczone bezpośrednio w~pliku faktury. Każda e-faktura musi być podpisana kwalifikowanym podpisem wystawcy (osoby fizycznej), co gwarantuje jej niezaprzeczalność na poziomie prawnym niezależnie od kanału przesyłu. SdI weryfikuje ten podpis przy odbiorze.
-    \item \textbf{Model zorientowany na sieć (PEPPOL):} zaufanie opiera się na federacji akredytowanych podmiotów technicznych. Biznesowy dokument e-faktury nie wymaga podpisu, ponieważ sieć ufa punktom dostępu jako zaufanym strażnikom (\textit{gatekeepers}). Tożsamość i~bezpieczeństwo są weryfikowane na poziomie komunikacji między tymi punktami, przy użyciu dedykowanej, zamkniętej PKI OpenPeppol G3.
-    \item \textbf{Model zorientowany na sesję (KSeF):} zaufanie jest scentralizowane i~weryfikowane w~momencie wejścia do systemu. Podatnik musi uwierzytelnić się przed centralnym hubem (wykorzystując podpis kwalifikowany lub token KSeF), aby otworzyć sesję interaktywną. Po jej otwarciu faktury są przesyłane bez indywidualnych podpisów kwalifikowanych -- system ufa tożsamości powiązanej z~otwartą sesją komunikacyjną.
+    \item \textbf{Model zorientowany na sieć (PEPPOL):} zaufanie opiera się na federacji akredytowanych podmiotów technicznych. Biznesowy dokument e-faktury nie wymaga podpisu, ponieważ sieć ufa punktom dostępu jako zaufanym strażnikom (\textit{gatekeepers}). Tożsamość i~bezpieczeństwo są weryfikowane na poziomie komunikacji między tymi punktami.
+    \item \textbf{Model zorientowany na sesję (KSeF):} zaufanie jest scentralizowane i~weryfikowane w~momencie wejścia do systemu. Podatnik musi uwierzytelnić się przed systemem (wykorzystując podpis kwalifikowany lub token KSeF), aby otworzyć sesję interaktywną. Po jej otwarciu faktury są przesyłane bez indywidualnych podpisów kwalifikowanych -- system ufa tożsamości powiązanej z~otwartą sesją komunikacyjną.
 \end{itemize}
 
 \subsubsection{Bezpieczeństwo i szyfrowanie}
 \label{sec:porownanie-bezpieczenstwo-szyfrowanie}
 
-\subsubsection*{Sistema di Interscambio}
+SdI opiera bezpieczeństwo na podpisie kwalifikowanym na dokumencie (\ref{sec:porownanie-uwierzytelnianie-autoryzacja}), a sama treść faktury nie jest szyfrowana. Transport zabezpieczony jest przez protokół TLS (SDICoop) lub szyfrowany kanał SFTP (SDIFTP). \cite{sdi-fatturapa-regole-tecniche,sdi-fatturapa-accreditamento}
 
-\textbf{SdI} opiera bezpieczeństwo na \textbf{podpisie kwalifikowanym na dokumencie} (XAdES-BES/CAdES-BES). Treść faktury XML nie jest szyfrowana -- SdI nie wymaga \textit{envelope encryption} zawartości biznesowej. Transport zabezpieczony jest przez TLS/HTTPS (SDICoop) lub szyfrowany kanał SFTP (SDIFTP). \cite{sdi-fatturapa-regole-tecniche,sdi-fatturapa-accreditamento}
+PEPPOL realizuje bezpieczeństwo na poziomie wiadomości AS4: profil Peppol AS4 wymaga podpisu \textbf{XML-DSig} oraz szyfrowania \textbf{XML-Enc} ładunku wiadomości. Transport komunikatu wymaga TLS~1.2+. Na poziomie faktury biznesowej nie jest wymagany podpis kwalifikowany (krajowe Peppol Authority mogą go wprowadzić indywidualnie). \cite{peppol-as4-profile}
 
-\subsubsection*{PEPPOL}
-
-\textbf{PEPPOL} realizuje bezpieczeństwo na \textbf{poziomie wiadomości AS4}: profil Peppol AS4 wymaga podpisu XML-DSig (\textit{Binary Security Token}) oraz szyfrowania XML-Enc \textit{payloadu} -- tzw.~\textit{message-level encryption} między punktem dostępu nadawcy a~punktem dostępu odbiorcy. Transport wymaga TLS~1.2+. Na poziomie faktury biznesowej brak wymogu kwalifikowanego podpisu (krajowe Peppol Authority mogą go wprowadzić krajowo). \cite{peppol-as4-profile}
-
-\subsubsection*{Zestawienie modeli bezpieczeństwa.}
-
-Podsumowując różnice strategii: SdI ufa podpisowi \emph{na dokumencie}, PEPPOL ufa zabezpieczeniom \emph{warstwy transportowej} AS4, a~KSeF stosuje obligatoryjne szyfrowanie \emph{zawartości} niezależnie od zabezpieczeń transportu.
-
-\subsection{Podsumowanie}
-\label{sec:porownanie-podsumowanie}
-
-Syntetyczne zestawienie kluczowych cech technicznych analizowanych systemów przedstawiono w~tabeli~\ref{tab:porownanie}.
-
-\begin{xltabular}{\linewidth}{l X X X}
-    \toprule
-    \textbf{Aspekt} & \textbf{SdI (Włochy)} & \textbf{PEPPOL} & \textbf{KSeF (Polska)} \\
-    \midrule
-    \endfirsthead
-    \toprule
-    \textbf{Aspekt} & \textbf{SdI (Włochy)} & \textbf{PEPPOL} & \textbf{KSeF (Polska)} \\
-    \midrule
-    \endhead
-    \bottomrule
-    \endfoot
-    \bottomrule
-    \caption{Porównanie systemów e-fakturowania: SdI, PEPPOL i KSeF.}
-    \label{tab:porownanie}
-    \endlastfoot
-    Operator & Agenzia delle Entrate / Sogei & OpenPeppol AISBL + krajowe Peppol Authorities & Ministerstwo Finansów RP \\
-    Model architektoniczny & Central hub (clearance) & 4-corner / 5-corner (sieć interoperacyjna) & Central hub (clearance) \\
-    Archiwum centralne & Nie & Nie & Tak (10 lat) \\
-    Zakres podmiotowy & B2G + B2B + B2C & B2G (obowiązkowo UE), B2B (krajowo) & B2B obowiązkowo \\
-    Format danych & FatturaPA XML (krajowy) & UBL 2.1 / CII D16B (PEPPOL BIS 3.0 / EN 16931) & FA(3) XML (krajowy) \\
-    Zgodność z EN 16931 & Równoważna, nie natywna & Natywna (CIUS) & Nie \\
-    Protokół transportowy & SDICoop (SOAP), SDIFTP, PEC, web UI & AS4 (ebMS 3.0), one-way push & REST API (HTTPS + JSON/XML) \\
-    Discovery odbiorcy & Codice Destinatario / PEC w fakturze & SML (DNS) + SMP (dynamiczny lookup) & Brak (NIP w treści, centralny hub) \\
-    Identyfikator podmiotu & Partita IVA + Codice Destinatario (7 znaków) & Peppol Participant ID (\texttt{ICD:value}) & NIP \\
-    Podpis na fakturze & Obowiązkowy XAdES-BES lub CAdES-BES & Brak (opcjonalny krajowo) & Brak \\
-    Szyfrowanie zawartości & Nie wymagane & XML-Enc \textit{payloadu} AS4 & AES-256-CBC + RSA-OAEP (obowiązkowe) \\
-    Komunikat zwrotny & 7 typów \textit{notifiche} SdI & MLR (Accepted / Rejected) & UPO (XML) \\
-    Specyfikacja publiczna & XSD + dok.\ techniczna fatturapa.gov.it & OpenAPI + Schematron na docs.peppol.eu & OpenAPI 3.0.4 + XSD FA(3) \\
-\end{xltabular}
+Zestawiając modele bezpieczeństwa, SdI ufa podpisowi \emph{na dokumencie}, PEPPOL ufa zabezpieczeniom \emph{warstwy transportowej} AS4, a~KSeF stosuje obligatoryjne szyfrowanie \emph{zawartości} niezależnie od zabezpieczeń transportu.
