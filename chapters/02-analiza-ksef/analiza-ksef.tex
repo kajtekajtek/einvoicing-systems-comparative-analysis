@@ -4,20 +4,20 @@
 \subsection{Kontekst i podstawy prawne}
 \label{sec:ksef-kontekst}
 
-\textbf{Krajowy System e-Faktur (KSeF)} to państwowy system teleinformatyczny obowiązujący w Polsce, służący do centralnej wymiany i archiwizacji \textbf{faktur ustrukturyzowanych}, czyli dokumentów elektronicznych w formacie XML zgodnych ze strukturą logiczną FA(3). Stanowi on realizację powszechnego obowiązku fakturowania elektronicznego, który jest sukcesywnie wdrażany dla poszczególnych grup przedsiębiorców począwszy od lutego 2026~r. \cite{ksef-w-pigulce,ksef-plan-wdrozenia}
+\textbf{Krajowy System e-Faktur (KSeF)} to państwowy system teleinformatyczny obowiązujący w Polsce, służący do centralnej wymiany i archiwizacji faktur ustrukturyzowanych zgodnych ze strukturą logiczną FA(3). Stanowi on realizację powszechnego obowiązku fakturowania elektronicznego, który jest sukcesywnie wdrażany dla poszczególnych grup przedsiębiorców począwszy od lutego 2026~r. \cite{ksef-w-pigulce,ksef-plan-wdrozenia}
 
 \subsection{Architektura systemu}
 \label{sec:ksef-architektura}
 
-KSeF został zaprojektowany jako \textbf{scentralizowane repozytorium} faktur ustrukturyzowanych. Wszystkie e-faktury wystawiane w obrocie krajowym B2B (\textit{Business to Business}) trafiają do jednego systemu prowadzonego przez państwo, który pełni jednocześnie rolę kanału przekazu dokumentu oraz jego archiwum przez 10 lat. \cite{ksef-w-pigulce}
+KSeF został zaprojektowany w modelu \textbf{scentralizowanego repozytorium}. Wszystkie e-faktury wystawiane w obrocie krajowym B2B (\textit{Business to Business}) trafiają do jednego systemu prowadzonego przez państwo, który pełni jednocześnie rolę kanału przekazu dokumentu oraz jego archiwizatora przez okres 10 lat. \cite{ksef-w-pigulce}
 
 \subsubsection{Komponenty logiczne}
 \label{sec:ksef-komponenty}
 
-Z perspektywy integratora architektura KSeF składa się z trzech współpracujących komponentów: \cite{ksef-docs-repo}
+Z perspektywy integratora system składa się z trzech współpracujących komponentów: \cite{ksef-docs-repo}
 
 \begin{itemize}
-    \item \textbf{System wywołujący (System IT klienta)} -- oprogramowanie podatnika inicjujące komunikację z KSeF, np. system finansowo-księgowy, ERP, aplikacja mobilna.
+    \item \textbf{System wywołujący} -- oprogramowanie podatnika inicjujące komunikację z KSeF, np. system finansowo-księgowy, ERP, aplikacja mobilna.
     \item \textbf{REST API KSeF} -- publiczny interfejs programistyczny udostępniający operacje wystawiania, odbierania, wyszukiwania faktur oraz zarządzania uprawnieniami i certyfikatami. Specyfikacja interfejsu stanowi jedyny kontrakt integracyjny pomiędzy systemami zewnętrznymi a KSeF. \cite{ksef-publikacja-api}
     \item \textbf{System KSeF} -- centralne repozytorium faktur, moduł uprawnień, moduł certyfikatów wewnętrznych oraz mechanizm wystawiania Urzędowych Poświadczeń Odbioru (UPO). \cite{ksef-docs-przeglad}
 \end{itemize}
@@ -39,19 +39,21 @@ System umożliwia kilka równoległych kanałów dostępu: \cite{ksef-plan-wdroz
 System dostępny jest w trzech niezależnych środowiskach, różniących się danymi, limitami wywołań API (\textit{rate limits}) oraz skutkami prawnymi wystawianych dokumentów:
 
 \begin{itemize}
-    \item \textbf{Środowisko testowe (integracyjne)} -- udostępnione 30 września 2025 r., przeznaczone jest do testów integracyjnych z danymi syntetycznymi. Dostępne pod adresem \texttt{api-test.ksef.mf.gov.pl}, zawiera dodatkowe \textit{pomocnicze API} pozwalające zasymulować rejestrację podmiotu, nadanie uprawnień ZAW-FA czy utworzenie grupy VAT. \cite{ksef-docs-przeglad,ksef-start-testow}
-    \item \textbf{Środowisko przedprodukcyjne (Demo)} -- uruchomione 15 października 2025 r., pracuje na rzeczywistych danych uwierzytelniających podatników, lecz wystawione faktury nie wywierają skutków prawnych. Służy weryfikacji końcowej przed produkcją. \cite{ksef-udostepnienie-przedprod}
-    \item \textbf{Środowisko produkcyjne} -- uruchomione 28 stycznia 2026 r. dla weryfikacji systemów komercyjnych, a od 1 lutego 2026 r. jedyna obowiązująca instancja KSeF. Wystawione w nim faktury wywierają pełne skutki prawne. \cite{ksef-udostepnienie-prod}
+    \item \textbf{Środowisko testowe (integracyjne)} -- przeznaczone do testów integracyjnych z danymi syntetycznymi. Dostępne pod adresem \texttt{api-test.ksef.mf.gov.pl}, zawiera dodatkowy interfejs programistyczny pozwalający zasymulować rejestrację podmiotu, nadanie uprawnień ZAW-FA czy utworzenie grupy VAT. \cite{ksef-docs-przeglad,ksef-start-testow}
+    \item \textbf{Środowisko przedprodukcyjne (Demo)} -- służące do weryfikacji końcowej przed wdrożeniem produkcyjnym, pracuje na rzeczywistych danych uwierzytelniających podatników, lecz wystawione w nim faktury nie wywierają skutków prawnych. \cite{ksef-udostepnienie-przedprod}
+    \item \textbf{Środowisko produkcyjne} -- środowisko docelowe, w którym wystawiane faktury wywierają pełne skutki prawne. \cite{ksef-udostepnienie-prod}
 \end{itemize}
 
 \subsubsection{Tryby pracy}
 \label{sec:ksef-tryby-pracy}
 
-Architektura KSeF przewiduje dwa równoważne tryby wystawiania faktur, które wpływają na ścieżkę dokumentu w systemie: \cite{ksef-plan-wdrozenia}
+Architektura KSeF przewiduje cztery tryby wystawiania faktur. Dwa z nich -- tryby online i~offline24 -- inicjowane są przez podatnika. Pozostałe dwa tryby uruchamiane są w~razie zakłóceń działania systemu. \cite{ksef-plan-wdrozenia,ksef-tryby-offline}
 
 \begin{itemize}
     \item \textbf{Tryb online} -- faktura jest wystawiana bezpośrednio w KSeF, a numer KSeF (oraz datę wystawienia) nadaje system w momencie odbioru.
-    \item \textbf{Tryb offline24} -- faktura jest wystawiana lokalnie u podatnika, a następnie przesyłana do KSeF nie później niż następnego dnia roboczego. Tryb ten wymaga posłużenia się \textbf{certyfikatem KSeF typu~2} (certyfikatem offline) -- wewnętrznym certyfikatem wydawanym przez Ministerstwo Finansów, wymaganym do oznaczenia faktury kodem potwierdzającym tożsamość wystawcy przy wystawianiu poza systemem. \cite{ksef-certyfikaty}
+    \item \textbf{Tryb offline24} -- faktura wystawiana jest lokalnie u podatnika, a następnie przesyłana do KSeF nie później niż następnego dnia roboczego. Tryb ten wymaga posłużenia się \textbf{certyfikatem KSeF typu~2}, wydawanym przez Ministerstwo Finansów, wymaganym do oznaczenia faktury kodem potwierdzającym tożsamość wystawcy przy wystawianiu poza systemem. \cite{ksef-certyfikaty}
+    \item \textbf{Tryb offline} -- uruchamiany w przypadku niedostępności KSeF. Faktura wystawiana jest poza systemem, a~podatnik ma obowiązek dostarczyć ją do KSeF najpóźniej następnego dnia roboczego po zakończeniu niedostępności.
+    \item \textbf{Tryb awaryjny} -- aktywowany w przypadku awarii systemu. Termin na dosłanie faktury wynosi 7~dni roboczych od zakończenia awarii; kolejny komunikat o~awarii wydłuża ten termin. W~przypadku awarii całkowitej obowiązek przesyłania faktur do KSeF jest w~całości zniesiony, a~fakturę można wystawić w~dowolnej formie bez struktury FA(3).
 \end{itemize}
 
 \subsection{Wzór faktury -- struktura logiczna FA(3)}
@@ -88,29 +90,28 @@ Schemat FA(3) definiuje osiem elementów najwyższego poziomu dokumentu XML: \ci
 	\caption{Elementy głównego schematu FA(3).} \label{tab:fa3-elementy} \\
 \end{xltabular}
 
-Każde pole w schemacie FA(3) należy do jednej z trzech kategorii: pola \textbf{obowiązkowe} muszą wypełnione zostać bezwarunkowo (np.\ \texttt{Podmiot1/\allowbreak{}DaneIdentyfikacyjne/\allowbreak{}NIP}), pola \textbf{warunkowe} wymagane są tylko przy spełnieniu określonego warunku prawnego lub logicznego (np.\ \texttt{Fa/FaWiersz/P\_11A} dla faktur zaliczkowych), natomiast wypełnienie pól \textbf{opcjonalnych} nie jest wymagane ani przez schemat, ani przez przepisy (np.\ \texttt{Fa/FaWiersz/PKWiU}).
-Wymagalność pola należy oceniać w kontekście elementu nadrzędnego: jeśli element nadrzędny jest opcjonalny i nie zostanie użyty, jego pola obowiązkowe również pozostają puste. \cite{ksef-fa3-infosheet}
+Każde pole w schemacie FA(3) należy do jednej z trzech kategorii: pola \textbf{obowiązkowe} muszą wypełnione zostać bezwarunkowo (np.\ \texttt{Podmiot1/\allowbreak{}DaneIdentyfikacyjne/\allowbreak{}NIP}), pola \textbf{warunkowe} wymagane są tylko przy spełnieniu określonego warunku prawnego lub logicznego (np.\ \texttt{Fa/FaWiersz/P\_11A} dla faktur zaliczkowych), natomiast wypełnienie pól \textbf{opcjonalnych} nie jest wymagane ani przez schemat, ani przez przepisy (np.\ \texttt{Fa/FaWiersz/PKWiU}). \cite{ksef-fa3-infosheet}
 
 \subsubsection{Przykład uproszczonej faktury w formacie FA(3)}
 \label{sec:ksef-fa3-przyklad}
 
 Poniższy przykład ilustruje minimalną strukturę sprzedaży towaru.
 
-\inputminted[fontsize=\small, breaklines, frame=lines, linenos]{xml}{chapters/02-analiza-ksef/fa3-example.xml}
+\inputminted[fontsize=\footnotesize, breaklines, frame=lines, linenos]{xml}{chapters/02-analiza-ksef/fa3-example.xml}
 
 \subsubsection{Poziomy walidacji dokumentu}
 \label{sec:ksef-walidacja}
 
-Każda faktura przechodzi przez cztery uzupełniające się poziomy walidacji, których pozytywne ukończenie jest warunkiem przyjęcia dokumentu i wystawienia UPO.
+Każda faktura przechodzi przez cztery poziomy walidacji, których pozytywne ukończenie jest warunkiem przyjęcia dokumentu i wystawienia Urzędowego Poświadczenia Odbioru (UPO).
 
 \begin{enumerate}
-    \item \textbf{Walidacja syntaktyczna} weryfikuje poprawność dokumentu XML w kontekście specyfikacji \textit{XML W3C}~1.0 oraz wymagań systemu, a także zgodność z zadeklarowanym przy otwarciu sesji schematem XSD. Niespełnienie któregokolwiek z tych wymagań skutkuje odrzuceniem faktury już na etapie parsowania.
+    \item \textbf{Walidacja syntaktyczna} weryfikuje poprawność dokumentu XML w kontekście specyfikacji \textit{XML W3C}~1.0 oraz wymagań systemu, a także zgodność z zadeklarowanym przy otwarciu sesji schematem XSD.
 
-    \item \textbf{Walidacja techniczna} obejmuje weryfikację maksymalnego rozmiaru pliku oraz limitu ilości faktur w sesji. Na tym poziomie sprawdzana jest również poprawność kryptograficzna: użycie algorytmu \texttt{AES-256-CBC} z dopełnieniem PKCS\#7 oraz zaszyfrowanie klucza symetrycznego algorytmem \texttt{RSAES-OAEP} (SHA-256/MGF1). W sesji interaktywnej dodatkowo wyliczane i porównywane są skróty kryptograficzne faktury jawnej oraz zaszyfrowanej wraz z ich rozmiarami.
+    \item \textbf{Walidacja techniczna} obejmuje weryfikację maksymalnego rozmiaru pliku oraz limitu ilości faktur w sesji. Na tym etapie sprawdzana jest również poprawność kryptograficzna: użycie algorytmu \texttt{AES-256-CBC} z dopełnieniem PKCS\#7 oraz zaszyfrowanie klucza symetrycznego algorytmem \texttt{RSAES-OAEP} (SHA-256/MGF1). W sesji interaktywnej dodatkowo wyliczane i porównywane są skróty kryptograficzne faktury jawnej oraz zaszyfrowanej wraz z ich rozmiarami.
 
     \item \textbf{Walidacja semantyczna (biznesowa)} weryfikuje poprawność logiczną i zgodność danych z regułami biznesowymi. Obejmuje m.in.: weryfikację sumy kontrolnej numerów NIP, walidację dat wystawienia faktury, a także weryfikację unikalności faktury, omówioną w sekcji~\ref{sec:ksef-fa3-duplikaty}.
 
-    \item \textbf{Walidacja uprawnień i kontekstu} -- równolegle do walidacji treści system kontroluje, czy uwierzytelniony podmiot posiada odpowiednie uprawnienia do wystawienia faktury w kontekście wskazanego sprzedawcy (\texttt{Podmiot1}). Mechanizm ten korzysta z modułu uprawnień KSeF i obejmuje weryfikację ról nadanych zarówno bezpośrednio (np.\ właścicielowi NIP), jak i pośrednio (np.\ biuru rachunkowemu działającemu jako \texttt{PodmiotUpowazniony}). Brak uprawnień powoduje odrzucenie faktury niezależnie od jej poprawności syntaktycznej.
+    \item \textbf{Walidacja uprawnień i kontekstu} -- równolegle do walidacji treści system kontroluje, czy uwierzytelniony podmiot posiada odpowiednie uprawnienia do wystawienia faktury. Mechanizm ten korzysta z modułu uprawnień KSeF i obejmuje weryfikację ról nadanych zarówno bezpośrednio (np.\ właścicielowi NIP), jak i pośrednio (np.\ biuru rachunkowemu działającemu jako \texttt{PodmiotUpowazniony}).
 \end{enumerate}
 
 Każdy zidentyfikowany błąd zwracany jest klientowi w odpowiedzi API w postaci numerycznego kodu błędu wraz z opisem. Pełna lista kodów publikowana jest jako część specyfikacji OpenAPI. \cite{ksef-openapi,ksef-weryfikacja-faktury}
@@ -125,7 +126,7 @@ KSeF weryfikuje unikalność faktur na podstawie kombinacji trzech pól: NIP spr
 \subsection{Model komunikacji}
 \label{sec:ksef-model-komunikacji}
 
-Komunikacja z Systemem KSeF realizowana jest poprzez jednolity interfejs sieciowy. Architektura rozwiązania wymaga stosowania standardów kryptograficznych zarówno na poziomie uwierzytelniania, jak i szyfrowania przesyłanych dokumentów. \cite{ksef-docs-przeglad}
+Komunikacja z Systemem KSeF realizowana jest poprzez jednolity interfejs programistyczny. Architektura rozwiązania wymaga stosowania standardów kryptograficznych zarówno na poziomie uwierzytelniania, jak i szyfrowania przesyłanych dokumentów. \cite{ksef-docs-przeglad}
 
 \subsubsection{Interfejs programistyczny}
 \label{sec:ksef-interfejs-programistyczny}
@@ -143,7 +144,7 @@ Interfejs wykorzystuje mechanizm \textit{rate limitingu}, w którym limity żąd
 \subsubsection{Uwierzytelnianie i autoryzacja}
 \label{sec:ksef-uwierzytelnianie-i-autoryzacja}
 
-Wersja KSeF API 2.0 wprowadziła w pełni asynchroniczny mechanizm uwierzytelniania oparty o \textbf{tokeny JWT (JSON Web Token)}, rozdzielając ten proces od cyklu życia \textit{sesji wysyłkowej} (\ref{sec:ksef-cykl-zycia-sesji}). Podstawą uzyskania dostępu jest powiązanie \textit{kontekstu logowania} (np.\ NIP firmy) z \textit{podmiotem uwierzytelniającym} (np.\ odciskiem palca użytego certyfikatu). \cite{ksef-docs-przeglad}
+System wykorzystuje w pełni asynchroniczny mechanizm uwierzytelniania oparty o \textbf{tokeny JWT (JSON Web Token)}, rozdzielając ten proces od cyklu życia sesji wysyłkowej (\ref{sec:ksef-cykl-zycia-sesji}). Podstawą uzyskania dostępu jest powiązanie \textit{kontekstu logowania} (podmiotu, w imieniu którego wykonywane będą operacje w systemie) z \textit{podmiotem uwierzytelniającym} (podmiotem podejmującym próbę uwierzytelnienia). \cite{ksef-docs-przeglad}
 
 Proces oparty jest na mechanizmie wyzwania (\textit{Challenge-Response}) i składa się z następujących kroków: \cite{ksef-docs-repo}
 
@@ -152,11 +153,11 @@ Proces oparty jest na mechanizmie wyzwania (\textit{Challenge-Response}) i skła
     
     \item \textbf{Podpisanie żądania:} Klient wybiera jedną z dwóch ścieżek autoryzacji:
     \begin{itemize}
-        \item \textbf{XAdES:} Klient buduje dokument XML (\texttt{AuthTokenRequest}) i podpisuje go podpisem w formacie XAdES (certyfikat kwalifikowany, pieczęć, profil zaufany lub wewnętrzny certyfikat KSeF). Dokument wysyłany jest asynchronicznie na \texttt{POST /auth/xades-signature}.
+        \item \textbf{XAdES:} Klient buduje dokument XML (\texttt{AuthTokenRequest}) i podpisuje go podpisem w formacie XAdES, wykorzystując do tego certyfikat kwalifikowany, profil zaufany, certyfikat KSeF lub certyfikat dostawcy usług PEPPOL (\ref{sec:porownanie-4corner}). Dokument wysyłany jest asynchronicznie na \texttt{POST /auth/xades-signature}.
         \item \textbf{Token KSeF:} Wygenerowany wcześniej wewnętrzny token systemowy połączony ze znacznikiem czasu z wyzwania zostaje zaszyfrowany za pomocą algorytmu RSA-OAEP kluczem publicznym systemu i wysłany na \texttt{POST /auth/ksef-token}.
     \end{itemize}
     
-    \item \textbf{Asynchroniczna weryfikacja:} w odpowiedzi zwracany jest tymczasowy token operacyjny (authenticationToken) wraz z numerem referencyjnym. Klient powinien odpytywać API o status weryfikacji, aż do uzyskania odpowiedzi o zakończeniu procesu. Jest to konieczne, ponieważ dla certyfikatów kwalifikowanych system weryfikuje w tle ich ważność u zewnętrznego wydawcy za pośrednictwem OCSP/CRL.
+    \item \textbf{Asynchroniczna weryfikacja:} w odpowiedzi zwracany jest tymczasowy token operacyjny (\textit{authenticationToken}) wraz z numerem referencyjnym, służący do odpytywania API przez klienta o status weryfikacji aż do uzyskania odpowiedzi o zakończeniu procesu. Jest to konieczne, ponieważ dla certyfikatów kwalifikowanych system weryfikuje w tle ich ważność u zewnętrznego wydawcy za pośrednictwem OCSP/CRL.
     
     \item \textbf{Odbiór JWT (\textit{Redeem}):} Gdy proces uwierzytelniania zakończy się sukcesem, klient jednorazowo wymienia token operacyjny na parę głównych tokenów dostępowych:
     \begin{itemize}
@@ -171,7 +172,7 @@ Proces oparty jest na mechanizmie wyzwania (\textit{Challenge-Response}) i skła
 Po uwierzytelnieniu system udostępnia dwa rodzaje sesji do wysyłania faktur:
 
 \begin{itemize}
-    \item \textbf{Sesja interaktywna} (\texttt{POST /sessions/online}) -- synchroniczna operacja przeznaczona do wysyłki pojedynczych, zaszyfrowanych plików XML. Sesja taka ważna jest przez 12 godzin i można utrzymywać wiele takich sesji równolegle. W odpowiedzi na przesłanie faktury system natychmiast zwraca numer referencyjny. \cite{ksef-sesja-interaktywna}
+    \item \textbf{Sesja interaktywna} (\texttt{POST /sessions/online}) -- synchroniczna operacja przeznaczona do wysyłki pojedynczych, zaszyfrowanych plików XML. Sesja ważna jest przez 12 godzin i można utrzymywać wiele takich sesji równolegle. W odpowiedzi na przesłanie faktury system natychmiast zwraca numer referencyjny. \cite{ksef-sesja-interaktywna}
     \item \textbf{Sesja wsadowa} (\texttt{POST /sessions/batch}) -- asynchroniczna operacja przeznaczona do masowej wysyłki plików ZIP. Paczka ZIP dzielona jest na części do 100 MB przed zaszyfrowaniem. \cite{ksef-sesja-wsadowa}
 \end{itemize}
 
@@ -191,7 +192,7 @@ KSeF stanowi pasywne repozytorium, z którego klient samodzielnie pobiera dokume
 
 \subsubsection*{Wyszukiwanie i pobieranie pojedynczej faktury} 
 
-Do podstawowych operacji odbiorczych system udostępnia dwa endpointy: \cite{ksef-pobieranie-faktur}
+Do podstawowych operacji odbiorczych system udostępnia dwa punkty końcowe: \cite{ksef-pobieranie-faktur}
 
 \begin{itemize}
     \item \texttt{GET /invoices/ksef/\{ksefNumber\}} -- zwraca treść XML konkretnej faktury identyfikowanej numerem KSeF nadanym przy wystawieniu,
@@ -200,7 +201,7 @@ Do podstawowych operacji odbiorczych system udostępnia dwa endpointy: \cite{kse
 
 \subsubsection*{Eksport asynchroniczny} 
 
-Pobieranie dużych zbiorów faktur (np.\ pełnej historii podmiotu) realizowane jest poprzez parę endpointów asynchronicznych: \cite{ksef-pobieranie-faktur}
+Pobieranie dużych zbiorów faktur (np.\ pełnej historii podmiotu) realizowane jest poprzez operacje asynchroniczne: \cite{ksef-pobieranie-faktur}
 
 \begin{enumerate}
     \item \texttt{POST /invoices/exports} -- klient inicjuje operację, przekazując filtry oraz informacje o szyfrowaniu (klucz AES + IV), które posłużą do zabezpieczenia paczki wynikowej. W odpowiedzi otrzymuje numer referencyjny operacji.
@@ -209,7 +210,7 @@ Pobieranie dużych zbiorów faktur (np.\ pełnej historii podmiotu) realizowane 
 
 \subsubsection*{Przyrostowe pobieranie faktur} 
 
-W scenariuszu utrzymywania lokalnej kopii repozytorium kluczowa jest \textit{ciągłość} pobierania danych. System adresuje ten problem poprzez mechanizm \textbf{High Water Mark (HWM)}, czyli punkt w czasie, do którego system gwarantuje kompletność danych. Wartość ta wyrażona jest datą trwałego zapisu faktury w repozytorium.
+W przypadku utrzymywania lokalnej kopii repozytorium kluczowa jest \textit{ciągłość} pobierania danych. System adresuje ten problem poprzez mechanizm \textbf{High Water Mark (HWM)}, będącego punktem w czasie, do którego system gwarantuje kompletność danych. Wartość ta wyrażona jest datą trwałego zapisu faktury w repozytorium.
 
 W modelu przyrostowym klient pobiera faktury w przylegających, nieprzecinających się oknach czasowych. Każda paczka eksportu zawiera jeden ze znaczników pozwalających wyznaczyć początek kolejnego okna: \cite{ksef-przyrostowe-pobieranie}
 

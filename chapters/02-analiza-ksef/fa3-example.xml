@@ -23,22 +23,7 @@ xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
 		</DaneKontaktowe>
 	</Podmiot1>
 	<Podmiot2>
-		<DaneIdentyfikacyjne>
-			<NIP>1111111111</NIP>
-			<Nazwa>Jan Skrzetuski</Nazwa>
-		</DaneIdentyfikacyjne>
-		<Adres>
-			<KodKraju>PL</KodKraju>
-			<AdresL1>ul. Polna 1</AdresL1>
-			<AdresL2>00-001 Zbaraż</AdresL2>
-		</Adres>
-		<DaneKontaktowe>
-			<Email>jan@skrzetuski.pl</Email>
-			<Telefon>555777999</Telefon>
-		</DaneKontaktowe>
-		<NrKlienta>fdfd778343</NrKlienta>
-		<JST>2</JST>
-		<GV>2</GV>
+		<!-- Dane nabywcy w strukturze analogicznej do Podmiot1 -->
 	</Podmiot2>
 	<Fa>
 		<KodWaluty>PLN</KodWaluty>
@@ -52,20 +37,7 @@ xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
 		<P_14_3>0.05</P_14_3>
 		<P_15>2051</P_15>
 		<Adnotacje>
-			<P_16>2</P_16>
-			<P_17>2</P_17>
-			<P_18>2</P_18>
-			<P_18A>2</P_18A>
-			<Zwolnienie>
-				<P_19N>1</P_19N>
-			</Zwolnienie>
-			<NoweSrodkiTransportu>
-				<P_22N>1</P_22N>
-			</NoweSrodkiTransportu>
-			<P_23>2</P_23>
-			<PMarzy>
-				<P_PMarzyN>1</P_PMarzyN>
-			</PMarzy>
+			<!-- Adnotacje do faktury -->
 		</Adnotacje>
 		<RodzajFaktury>VAT</RodzajFaktury>
 		<FP>1</FP>
